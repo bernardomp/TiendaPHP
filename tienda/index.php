@@ -34,7 +34,14 @@
 		case "Fin de simulacion":
 			cerrarSimulacion($con);
 			break;
-
+		
+		case "conexion":
+			entrarTienda($con,$xml);
+			break;
+		
+		case "salir":
+			salirTienda($con,$xml);
+			break;
 
 	}
 	

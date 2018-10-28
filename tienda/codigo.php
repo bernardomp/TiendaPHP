@@ -66,8 +66,22 @@ function convertirXML(){
 
 function entrarTienda($conexion,$datos){
 	//añade al cliente en la tienda en la que se encuentra
-	$actualizar='INSEERT INTI cliente..';
-	mysql_query($actualizar,$conexion);
+	
+	if (!$datos->schemaValidate('schema/go.xsd')) { //Necesitamos schema
+
+        echo 'DOMDocument::schemaValidate() Generated Errors!';
+        libxml_display_errors();
+    }
+	
+	$ip = $datos->getElementsByTagName('ip')->item(0)->nodeValue;
+    $puerto = $datos->getElementsByTagName('puerto')->item(0)->nodeValue;
+	$tienda = $datos->getElementsByTagName('puerto')->item(1)->nodeValue;
+	
+	$entrar_tienda="INSERT INTO cliente (ip,puerto,tiendaActual) VALUES ('$ip','$puerto','$tienda')";
+	
+	if (!$con->query($entrar_tienda)) {
+        printf("Error: %s\n", $con->error);
+    }
 }
 
 function extraerProductos(){
@@ -91,8 +105,21 @@ function extraerTiendas($conexion,$cliente){
 
 function salirTienda(){
 	//borra al cliente de la tienda en la que se encontraba
-	$actualizar='updte clientes...';
-	mysql_query($actualizar,$conexion);
+	
+	if (!$datos->schemaValidate('schema/go.xsd')) { //Necesitamos schema
+
+        echo 'DOMDocument::schemaValidate() Generated Errors!';
+        libxml_display_errors();
+    }
+	
+	$ip = $datos->getElementsByTagName('ip')->item(0)->nodeValue;
+    $puerto = $datos->getElementsByTagName('puerto')->item(0)->nodeValue;
+	
+	$salir_tienda="DELETE FROM cliente WHERE ip = '$ip' and puerto = '$puerto'";
+	
+	if (!$con->query($entrar_tienda)) {
+        printf("Error: %s\n", $con->error);
+    }
 }
 
 function cerrarTienda($con,$datos){
