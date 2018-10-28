@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<mensaje> 
+    <emisor> 
+        <direccion> 
+            <ip>192.168.1.1</ip> 
+            <puerto>80</puerto> 
+        </direccion> 
+        <rol>Comprador</rol>   
+    </emisor> 
+    <receptor> 
+        <direccion> 
+            <ip>192.168.1.2</ip> 
+            <puerto>80</puerto> 
+        </direccion> 
+        <rol>Tienda</rol>   
+    </receptor> 
+    <tipo>compra</tipo> 
+    <cuerpo> 
+        <producto> 
+            <nombre>p1</nombre> 
+            <cantidad>8</cantidad> 
+        </producto> 
+    </cuerpo> 
+</mensaje>

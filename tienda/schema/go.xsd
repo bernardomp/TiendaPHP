@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="https://www.w3schools.com" xmlns="https://www.w3schools.com" elementFormDefault="qualified">
+
+<xs:element name="mensaje">
+  <xs:complexType>
+      <xs:sequence>
+        <xs:element name="emisor">
+          <xs:complexType>
+            <xs:sequence>
+	      <xs:element name="direccion">
+          	<xs:complexType>
+           	  <xs:sequence>
+		    <xs:element name="ip" type="ip"/>
+		    <xs:element name="puerto" type="xs:integer"/>
+            	  </xs:sequence>
+          	</xs:complexType>
+              </xs:element>
+              <xs:element name="rol" type="xs:string" fixed="Monitor"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+	<xs:element name="receptor">
+          <xs:complexType>
+            <xs:sequence>
+	      <xs:element name="direccion">
+          	<xs:complexType>
+           	  <xs:sequence>
+		    <xs:element name="ip" type="ip"/>
+		    <xs:element name="puerto" type="xs:integer"/>
+            	  </xs:sequence>
+          	</xs:complexType>
+              </xs:element>
+              <xs:element name="rol">
+	        <xs:simpleType>
+		  <xs:restriction base="xs:string">
+		    <xs:enumeration value="Comprador"/>
+		    <xs:enumeration value="Tienda"/>
+		  </xs:restriction>
+		</xs:simpleType>
+	      </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+	<xs:element name="tipo" type="xs:string" fixed="evento"/>
+	<xs:element name="cuerpo">
+          <xs:complexType>
+            <xs:sequence>
+	      <xs:element name="tipoEvento" type="xs:string" fixed="GO"/>
+	      <xs:element name="contenido" type="xs:string" fixed="Inicio de simulacion"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+  </xs:complexType>
+</xs:element>
+
+<xs:simpleType name="ip">
+  <xs:restriction base="xs:string">
+    <xs:pattern value="(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])"/>
+  </xs:restriction>
+</xs:simpleType>
+
+</xs:schema>

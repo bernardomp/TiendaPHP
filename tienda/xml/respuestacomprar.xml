@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<mensaje> 
+    <emisor> 
+        <direccion> 
+            <ip>192.168.1.1</ip>
+            <puerto>80</puerto> 
+        </direccion>    
+        <rol>Tienda</rol> 
+    </emisor> 
+    <receptor> 
+        <direccion> 
+            <ip>192.168.1.2</ip> 
+            <puerto>80</puerto> 
+        </direccion>    
+        <rol>Comprador</rol>   
+    </receptor> 
+    <tipo>venta</tipo> 
+    <cuerpo>
+        <tipoEvento>Aviso|Error|Evento</tipoEvento> 
+        <contenido>Mensaje de aviso</contenido> 
+    </cuerpo> 
+</mensaje>

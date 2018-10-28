@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mensaje xmlns="https://www.w3schools.com">
+  <emisor>
+    <direccion>
+      <ip>192.168.1.1</ip>
+      <puerto>80</puerto>
+    </direccion>
+    <rol>Monitor</rol>
+  </emisor>
+  <receptor>
+    <direccion>
+      <ip>192.168.1.2</ip>
+      <puerto>80</puerto>
+    </direccion>
+    <rol>Tiendar</rol>
+  </receptor>
+  <tipo>evento</tipo>
+  <cuerpo>
+    <tipoEvento>GO</tipoEvento>
+    <contenido>Inicio de simulacion</contenido>
+  </cuerpo>
+</mensaje>
