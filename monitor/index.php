@@ -1,8 +1,8 @@
 <?php
 	
-//$post = file_get_contents('php://input');
+$post = file_get_contents('php://input');
 
 $dom = new DOMDocument();
-$dom->load("../tienda/xml/ackinicio.xml");
+$dom->loadXML($post);
 echo $dom->saveXML();
 ?>

@@ -3,14 +3,16 @@
     <emisor> 
         <direccion> 
             <ip>192.168.1.1</ip> 
-            <puerto>80</puerto> 
+            <puerto>80</puerto>
+            <id>23</id>
         </direccion> 
         <rol>Comprador</rol>   
     </emisor> 
     <receptor> 
         <direccion> 
             <ip>192.168.1.2</ip> 
-            <puerto>80</puerto> 
+            <puerto>80</puerto>
+            <id>12</id>
         </direccion> 
         <rol>Tienda</rol>   
     </receptor> 

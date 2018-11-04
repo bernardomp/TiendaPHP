@@ -11,8 +11,9 @@
     <direccion>
       <ip>192.168.1.2</ip>
       <puerto>80</puerto>
+      <id>11</id>
     </direccion>
-    <rol>Tiendar</rol>
+    <rol>Comprador</rol>
   </receptor>
   <tipo>evento</tipo>
   <cuerpo>

@@ -5,19 +5,19 @@
       <ip>192.168.1.1</ip>
       <puerto>80</puerto>
     </direccion>
-    <rol>Monitor</rol>
+    <rol>cliente</rol>
   </emisor>
   <receptor>
     <direccion>
       <ip>192.168.1.2</ip>
       <puerto>80</puerto>
     </direccion>
-    <rol>Comprador</rol>
+    <rol>tienda</rol>
   </receptor>
-  <tipo>evento</tipo>
+  <tipo> conexion </tipo>
   <cuerpo>
-    <tipoEvento>ACK</tipoEvento>
-    <contenido>Inicio registrado</contenido>
-    <nuevoID>1526</nuevoID>
+    <msg> Quiero conectarme </msg>
+    <ip> ip cliente </ip>
+    <puerto> puerto </puerto>
   </cuerpo>
 </mensaje>

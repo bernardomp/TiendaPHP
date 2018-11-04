@@ -5,7 +5,7 @@
       <ip>192.168.1.1</ip>
       <puerto>80</puerto>
     </direccion>
-    <rol>Tienda</rol>
+    <rol>Comprador</rol>
   </emisor>
   <receptor>
     <direccion>

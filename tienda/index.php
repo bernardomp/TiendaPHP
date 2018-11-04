@@ -1,9 +1,13 @@
 <?php 
-	include "codigo.php";
+	include "AgenteTienda.php";
 
 	$ip_monitor = "192.168.1.224";
 	$port_monitor = 8081;
 
+	$ip_tienda = "192.168.1.224";
+	$port_tienda = 8081;
+
+	//Recibir datos
 	$postData = file_get_contents('php://input');
 	
 	//Procesamiento del XML
@@ -13,34 +17,54 @@
 		die("Recepción incorrecta");
 	}
 	
+	//Obtenemos el tipo de peticion
 	$tipo_req = $xml->getElementsByTagName('tipo')->item(0)->nodeValue;
 
 	if($tipo_req == "evento") {
 		$tipo_req = $xml->getElementsByTagName('contenido')->item(0)->nodeValue;
 	}
 
-	$con = new mysqli("localhost", "root", "toor", "multiagentes");
+	//Creacion de agente tienda
+	$tienda = new AgenteTienda($ip_monitor,$port_monitor,$ip_tienda,$port_tienda);
 
+	//Conexion a la bbdd
+	$tienda->conexionBBDD("localhost", "root", "toor", "multiagentes");
+
+	//Guardamos el fichero xml recibido
+	$tienda->setXML($xml);
+
+	//Ejecutamos una accion de la tienda
 	switch($tipo_req) {
 
-		case "inicializacion":
-			iniciarTiendaStock($con,$xml);
+		//Obtenemos id tienda del monitor
+		case "Inicio registrado":
+			$tienda->obtenerTiendaID();
 			break;
 
+		//Iniciamos el stock de las tiendas recibidos del monitor
+		case "inicializacion":
+			$tienda->iniciarTiendaStock();
+			break;
+
+		//El monitor indica el inicio de la simulacion
 		case "Inicio de simulacion":
-			iniciarSimulacion($con,$xml);
+			$tienda->iniciarSimulacion();
+			break;
+
+		case "compra":
+			$tienda->comprarProducto();
 			break;
 
 		case "Fin de simulacion":
-			cerrarSimulacion($con);
+			$tienda->finSimulacion();
 			break;
 		
 		case "conexion":
-			entrarTienda($con,$xml);
+			$tienda->entrarTienda();
 			break;
 		
 		case "salir":
-			salirTienda($con,$xml);
+			$tienda->salirTienda();
 			break;
 
 	}
