@@ -294,7 +294,7 @@
 
                 //actualizamos el stock de ese producto en la tienda 
                 if (!$this->con->query($actualizar_stock)) {
-                    printf("Error: %s\n", $con->error);
+                    printf("Error: %s\n", $this->con->error);
                 }
 
                 //Insertamos mensaje
