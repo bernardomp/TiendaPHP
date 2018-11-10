@@ -26,6 +26,25 @@
             $this->xml = $xml;
         }
 
+
+        //=====================================================================================
+
+            // AUTOR: 
+            // NOMBRE: conexionBBDD
+            // DESCRIPCIÓN: Se conecta con la base de datos
+
+            // ARGUMENTOS:
+            //	$ip: direccion ip del host
+            //	$user: nombre del usuario
+            //	$password: password del usuario
+            //	$database: nombre de la base de datos
+
+            // FUENTE: 
+            //	http://php.net/manual/es/book.curl.php
+
+            // SALIDA: --
+
+        //====================================================================================        
         public function conexionBBDD($ip,$user,$password,$database) {
             $this->con = new mysqli($ip, $user, $password, $database);
 
@@ -35,9 +54,19 @@
             }
         }
 
+
+        //=====================================================================================
+
+            // AUTOR: 
+            // NOMBRE: solicitarTiendas
+            // DESCRIPCIÓN: Manda peticion al monitor con nuestra ip y puerto para que cree las tiendas
+            // ARGUMENTOS: --
+            // FUENTE: --
+            // SALIDA: --
+
+        //====================================================================================    
         public function solicitarTiendas(){
-            //mandamos peticion al monitor con nuestra ip y puerto para que cree la tienda
-        
+
             $ntiendas = rand(5,10); //Generamos un numero aleatorio de tiendas
             
             //Preparamos el xml
@@ -74,7 +103,17 @@
         }
 
 
-        //recibe los id del monitor
+
+        //=====================================================================================
+
+            // AUTOR: 
+            // NOMBRE: obtenerTiendaID
+            // DESCRIPCIÓN: Recibe los id de las tiendas desde el monitor
+            // ARGUMENTOS: --
+            // FUENTE: --
+            // SALIDA: --
+
+        //====================================================================================   
         public function obtenerTiendaID() {
 
             /*
@@ -93,7 +132,18 @@
         
         }
 
-        //Inicializa el stock para cada tienda
+
+
+        //=====================================================================================
+
+            // AUTOR: 
+            // NOMBRE: iniciarTiendaStock
+            // DESCRIPCIÓN: Inicializa el stock para cada tienda
+            // ARGUMENTOS: --
+            // FUENTE: --
+            // SALIDA: --
+
+        //====================================================================================         
         public function iniciarTiendaStock(){
 
             //Validamos xml
@@ -128,6 +178,19 @@
             $this->agenteIniciado($tienda);
         }
 
+
+
+        //=====================================================================================
+
+            // AUTOR: 
+            // NOMBRE: agenteIniciado
+            // DESCRIPCIÓN: 
+            // ARGUMENTOS:
+            //  $tienda: 
+            // FUENTE: --
+            // SALIDA: --
+
+        //====================================================================================           
         public function agenteIniciado($tienda) {
 
             $doc = new DOMDocument();
@@ -154,6 +217,18 @@
             sendData($this->ip_monitor,$this->puerto_monitor,$xml);
         }
 
+
+
+        //=====================================================================================
+
+            // AUTOR: 
+            // NOMBRE: iniciarSimulacion
+            // DESCRIPCIÓN: Inicia la simulacion 
+            // ARGUMENTOS: --
+            // FUENTE: --
+            // SALIDA: --
+
+        //====================================================================================           
         public function iniciarSimulacion() {
 
             /*
@@ -172,7 +247,19 @@
             
         }
 
-        //añade al cliente en la tienda en la que se encuentra
+
+
+
+        //=====================================================================================
+
+            // AUTOR: 
+            // NOMBRE: entrarTienda
+            // DESCRIPCIÓN: Añade al cliente en la tienda en la que se encuentra
+            // ARGUMENTOS: --
+            // FUENTE: --
+            // SALIDA: --
+
+        //====================================================================================  
         public function entrarTienda(){
             /*
             if (!$datos->schemaValidate('schema/go.xsd')) { //Necesitamos schema
@@ -215,7 +302,18 @@
             sendData($ipCliente,$puertoCliente,$xml);
         }
 
-        //borra al cliente de la tienda en la que se encontraba
+
+
+        //=====================================================================================
+
+            // AUTOR: 
+            // NOMBRE: salirTienda
+            // DESCRIPCIÓN: Borra al cliente de la tienda en la que se encontraba
+            // ARGUMENTOS: --
+            // FUENTE: --
+            // SALIDA: --
+
+        //====================================================================================  
         public function salirTienda(){
             /*
             if (!$datos->schemaValidate('schema/go.xsd')) { //Necesitamos schema
@@ -232,8 +330,20 @@
             }
         }
 
+
+
+        //=====================================================================================
+
+            // AUTOR: 
+            // NOMBRE: cerrarTienda
+            // DESCRIPCIÓN: Cierra el acceso a la tienda si se queda sin productos
+            // ARGUMENTOS: --
+            // FUENTE: --
+            // SALIDA: --
+
+        //====================================================================================          
         public function cerrarTienda(){
-            //si nos quedamos sin productos cerramos el acceso a la tienda
+
             $id_tienda = $this->xml->getElementsByTagName('id')->item(1)->nodeValue;
             $cerrar_tienda="UPDATE tienda SET estado=0 WHERE id = '$id_tienda'";
         
@@ -242,7 +352,18 @@
             }
         }
 
-        //el monitor manda una peticion para finalizar el proceso
+
+
+        //=====================================================================================
+
+            // AUTOR: 
+            // NOMBRE: finSimulacion
+            // DESCRIPCIÓN: El monitor manda una peticion para finalizar el proceso
+            // ARGUMENTOS: --
+            // FUENTE: --
+            // SALIDA: --
+
+        //====================================================================================  
         public function finSimulacion(){
 
             $cerrar_simulacion="UPDATE tienda SET estado=0";
@@ -252,7 +373,18 @@
             }
         }
         
-        //Devuelve el listado de productos de una tienda
+
+
+        //=====================================================================================
+
+            // AUTOR: 
+            // NOMBRE: extraerProductos
+            // DESCRIPCIÓN: Devuelve el listado de productos de una tienda
+            // ARGUMENTOS: --
+            // FUENTE: --
+            // SALIDA: --
+
+        //====================================================================================  
         public function extraerProductos(){
            
             $productos='select nombre from producto';
@@ -260,7 +392,18 @@
         }
         
         
-        //si la tienda tiene el producto y hay unidades suficientes para vender al cliente
+
+
+        //=====================================================================================
+
+            // AUTOR: 
+            // NOMBRE: comprarProducto
+            // DESCRIPCIÓN: El cliente compra el producto si la tienda lo vende y hay unidades suficientes
+            // ARGUMENTOS: --
+            // FUENTE: --
+            // SALIDA: --
+
+        //====================================================================================     
         public function comprarProducto(){
         
             $idcliente = $this->xml->getElementsByTagName('id')->item(0)->nodeValue;
@@ -312,9 +455,21 @@
         
             
         }
+
         
+
+        //=====================================================================================
+
+            // AUTOR: 
+            // NOMBRE: extraerTiendas
+            // DESCRIPCIÓN: Devuelve el listado de tiendas de un cliente que esta en la misma tienda
+            // ARGUMENTOS: --
+            // FUENTE: --
+            // SALIDA: --
+
+        //====================================================================================          
         function extraerTiendas($conexion,$cliente){
-            //devuelve el listado de tiendas de un cliente que esta en la misma tienda
+
             $tiendas = 'select tiendas from cliente_tiendas where idcliente='.$cliente;
             mysql_query($tiendas,$conexion);
         }
