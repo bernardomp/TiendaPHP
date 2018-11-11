@@ -11,6 +11,13 @@
                 display:flex;
                 flex-direction:row;
             }
+
+            .flexitem {
+                margin:5px;
+                padding:5px;
+                border-style: solid;
+                border-color: grey;
+            }
     </style>
 </head>
 <body>
@@ -28,7 +35,7 @@
 
         <?php while($row = mysqli_fetch_array($tiendas)): ?>
                 
-                <div>
+                <div class="flexitem">
                     <div>Tienda: <?php echo $row["id"]?></div>
                     <div>
                         <?php

@@ -468,8 +468,9 @@
 
 
             if($cant>=1) {
+
                 //vendemos el producto y modificamos el stock de la tienda
-                $actualizar_stock="UPDATE Stock SET cantidad = cantidad-'$cant' WHERE idproducto='$producto'";
+                $actualizar_stock="UPDATE Stock SET cantidad = cantidad-'$cant' WHERE idproducto='$producto' and idtienda = '$idtienda' ";
 
                 //actualizamos el stock de ese producto en la tienda 
                 if (!$this->con->query($actualizar_stock)) {
@@ -509,6 +510,17 @@
             $tiendas = 'select tiendas from cliente_tiendas where idcliente='.$cliente;
             mysql_query($tiendas,$conexion);
         }
+
+        /*
+        function comprobarEstadoTienda() {
+            $id_tienda = $this->xml->getElementsByTagName('id')->item(1)->nodeValue;
+            $estado_tienda="SELECT estado FROM tienda WHERE id = '$id_tienda'";
+
+            if(!$estado = $this->con->query($estado_tienda)) {
+                printf("Error: %s\n", $this->con->error);
+            }
+           
+        }*/
 
 
     }
