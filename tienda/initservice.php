@@ -1,7 +1,7 @@
 <?php 
 	include "AgenteTienda.php";
 	
-	$ip_monitor = "192.168.1.224";
+	$ip_monitor = "192.168.1.224/init";
 	$port_monitor = 8081;
 
 	$ip_tienda = "192.168.1.224";

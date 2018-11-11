@@ -3,6 +3,7 @@
 
     class AgenteTienda {
 
+        //Atributos de la clase
         private $ip_monitor;
         private $puerto_monitor;
         
@@ -10,9 +11,10 @@
         private $puerto_tienda;
 
         private $con; //Conexion a la BBDD
-        private $xml;
+        private $xml; //Fichero xml que hemos recibido
 
 
+        //Constructor que inicializa los atributos de la clase
         function __construct($ip_monitor,$puerto_monitor,$ip_tienda,$puerto_tienda) {
             $this->ip_monitor = $ip_monitor;
             $this->puerto_monitor = $puerto_monitor;
@@ -21,6 +23,19 @@
             $this->puerto_tienda = $puerto_tienda;
             
         }
+
+         //=====================================================================================
+
+            // AUTOR: 
+            // NOMBRE: setXML
+            // DESCRIPCIÓN: Establece la propiedad xml con un fichero xml recibido
+
+            // ARGUMENTOS:
+            //	$xml: Fichero xml
+
+            // SALIDA: --
+
+        //==================================================================================== 
 
         public function setXML($xml) {
             $this->xml = $xml;
@@ -46,8 +61,11 @@
 
         //====================================================================================        
         public function conexionBBDD($ip,$user,$password,$database) {
+
+            //Establecemos la conexion con la ip, usuario, contraseña y basede datos
             $this->con = new mysqli($ip, $user, $password, $database);
 
+            //Comprobamos que no existe ningun error al establecer la conexion
             if ($this->con->connect_errno) {
                 printf("Connect failed: %s\n", $mysqli->connect_error);
                 exit();
@@ -69,20 +87,24 @@
 
             $ntiendas = rand(5,10); //Generamos un numero aleatorio de tiendas
             
-            //Preparamos el xml
+            //Preparamos el xml determinado
             $doc = new DOMDocument();
             $doc->load('xml/peticionconexion.xml');
         
             //Rellenamos fichero xml
+            
+            //Incluimos en el fichero xml la ip de origen y destino
             $doc->getElementsByTagName('ip')->item(0)->nodeValue = $this->ip_tienda;
             $doc->getElementsByTagName('ip')->item(1)->nodeValue = $this->ip_monitor;
         
+             //Incluimos en el fichero xml el puerto de origen y destino
             $doc->getElementsByTagName('puerto')->item(0)->nodeValue = $this->puerto_tienda;
             $doc->getElementsByTagName('puerto')->item(1)->nodeValue = $this->puerto_monitor;
             
+            //Iteramos por todas las tiendas creadas
             for ($i = 0; $i<$ntiendas; $i++){
-                //mandamos peticion al monitor para cada una de las tiendas pasandole la ip y puerto
         
+                //Guardamos el fichero xml modificado anteriorment
                 $xml =  $doc->saveXML();
                     
                 /*
@@ -98,6 +120,7 @@
                 }	
                 */
         
+                //Enviamos peticion al monitor para cada una de las tiendas pasandole la ip y puerto
                 sendData($this->ip_monitor,$this->puerto_monitor,$xml); 
             }
         }
@@ -123,9 +146,13 @@
             }
             */
 
+            //Obtenemos del fichero recibido el id para la nueva tienda creada
             $idTienda = $this->xml->getElementsByTagName('nuevoID')->item(0)->nodeValue;
+
+            //Creamos en la tabla tienda un nuevo registro
             $init_tienda="INSERT INTO tienda (id) VALUES ('$idTienda')";
             
+            //Comprobamos que la consulta se ha ejecutado correctamente
             if (!$this->con->query($init_tienda)) {
                 printf("Error: %s\n", $this->con->error);
             }
@@ -154,27 +181,36 @@
             }
             */
 
+            //Obtenemos del fichero xml la lista de productos recibidos
             $productos = $this->xml->getElementsByTagName('producto');
+
+            //Obtenemos del fichero xml el identificador de la tienda
             $tienda = $this->xml->getElementsByTagName('id')->item(0)->nodeValue;
 
+            //Iteramos sobre la lista de productos
             foreach($productos as $producto) {
         
+                //Para cada producto obtenemos el nombre y la cantidad
                 $nom_prod = $producto->getElementsByTagName('nombre')->item(0)->nodeValue;
                 $cant_prod = $producto->getElementsByTagName('cantidad')->item(0)->nodeValue;
 
+                //Actualizamos la lista de productos y el stock asociado a cada tienda
                 $producto_query = "INSERT INTO producto VALUES ('$nom_prod')";
                 $stock_query = "INSERT INTO stock VALUES ('$tienda','$nom_prod', '$cant_prod')";
 
+                //Comprobamos que la consulta se ha ejecudao correctamente
                 if (!$this->con->query($producto_query)) {
                     printf("Error Producto: %s\n", $this->con->error);
                 }
 
+                //Comprobamos que la consulta se ha ejecudao correctamente
                 if (!$this->con->query($stock_query)) {
                     printf("Error Stock: %s\n", $this->con->error);
                 }
 
             }
 
+            //Enviamos un mensaje de respuesta al monitor
             $this->agenteIniciado($tienda);
         }
 
