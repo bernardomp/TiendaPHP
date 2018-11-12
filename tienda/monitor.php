@@ -19,6 +19,20 @@
                 border-color: grey;
             }
     </style>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script>
+        function requestTienda() {
+            $.ajax({
+                method: "POST",
+                url: "initservice.php",
+            })
+            .done(function(a) {
+                console.log("Correcto: Solicitar tienda");
+            });
+        }
+
+    </script>
 </head>
 <body>
     <?php
@@ -72,6 +86,8 @@
 
 
     </div>
+
+    <input type="button" value="Request Tienda" onclick="requestTienda()">
     
 </body>
 </html>
