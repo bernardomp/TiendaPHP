@@ -1,49 +1,41 @@
 <?php 
 	include "AgenteTienda.php";
 
-	$ip_monitor = "192.168.1.224";
-	$port_monitor = 8081;
+	//Evitar mostrar algunas advertencias
+	error_reporting(E_ERROR | E_PARSE); 
 
-	$ip_tienda = "192.168.1.224";
-	$port_tienda = 8081;
+	$ip_monitor = "172.19.254.180";
+	$port_monitor = 3000;
 
-	//Recibir datos
+	$ip_tienda = " 172.19.177.1";
+	$port_tienda = 80;
+
+	//Recepcion de los datos 
 	$postData = file_get_contents('php://input');
-	
-	//Procesamiento del XML
-	$xml = new DOMDocument();
-	
-	if(!$xml->loadXML($postData)) {
-		die("Recepción incorrecta");
-	}
-	
-	//Obtenemos el tipo de peticion
-	$tipo_req = $xml->getElementsByTagName('tipo')->item(0)->nodeValue;
-
-	if($tipo_req == "evento") {
-		$tipo_req = $xml->getElementsByTagName('contenido')->item(0)->nodeValue;
-	}
 
 	//Creacion de agente tienda
 	$tienda = new AgenteTienda($ip_monitor,$port_monitor,$ip_tienda,$port_tienda);
-
+	
 	//Conexion a la bbdd
 	$tienda->conexionBBDD("localhost", "root", "toor", "multiagentes");
+	
+	//Procesamiento del XML recibido
+	$tienda->setXML($postData);
+	
+	//Obtenemos el tipo de peticion
+	$tipo_req = $tienda->getXML()->getElementsByTagName('tipo')->item(0)->nodeValue;
 
-	//Guardamos el fichero xml recibido
-	$tienda->setXML($xml);
+	if($tipo_req == "evento") {
+		$tipo_req = $tienda->getXML()->getElementsByTagName('contenido')->item(0)->nodeValue;
+	}
 
+	$tienda->showErrors(NULL,"Hola");
 	//Ejecutamos una accion de la tienda
 	switch($tipo_req) {
 
 		//Obtenemos id tienda del monitor
 		case "Inicio registrado":
 			$tienda->obtenerTiendaID();
-			break;
-
-		//Iniciamos el stock de las tiendas recibidos del monitor
-		case "inicializacion":
-			$tienda->iniciarTiendaStock();
 			break;
 
 		//El monitor indica el inicio de la simulacion
@@ -66,6 +58,9 @@
 		case "salir":
 			$tienda->salirTienda();
 			break;
+		
+		default:
+			$tienda->showErrors(NULL,"Index: No se que ejecutar");
 
 	}
 	

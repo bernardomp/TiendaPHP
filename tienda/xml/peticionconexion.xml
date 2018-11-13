@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="UTF-8"?>
+
 <mensaje xmlns="https://www.w3schools.com">
   <emisor>
     <direccion>
       <ip>192.168.1.1</ip>
       <puerto>80</puerto>
     </direccion>
-    <rol>Comprador</rol>
+    <rol>Tienda</rol>
   </emisor>
   <receptor>
     <direccion>

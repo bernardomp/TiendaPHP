@@ -1,5 +1,5 @@
 <?php
-    include "codigo.php";
+
 
 //=====================================================================================
 
@@ -38,7 +38,19 @@
             
         }
 
-        public function setXML($xml) {
+        public function getXML() {
+            return $this->xml;
+
+        }
+
+        public function setXML($data) {
+            $xml = new DOMDocument();
+
+            if (!$xml->loadXML($data)) {
+                echo 'Error al convertir el documento xml';
+                $this->showErrors(NULL,"Error parsing xml");
+                exit;
+	        }
             $this->xml = $xml;
         }
 
@@ -114,8 +126,14 @@
                 }	
                 */
         
-                sendData($this->ip_monitor,$this->puerto_monitor,$xml); 
+                $this->showErrors(NULL,"antes");
+               $response = $this->sendData($this->ip_monitor,$this->puerto_monitor,$xml);
+               $this->showErrors(NULL,"despues".$response);
+               $this->setXML($response);
+               $this->obtenerTiendaID();
+               $this->showErrors(NULL,"sfdsfsaaaa");
             }
+
         }
 
 
@@ -190,7 +208,7 @@
                 }
 
             }
-
+            $this->showErrors($tienda,"Hola");
             $this->agenteIniciado($tienda);
         }
 
@@ -230,7 +248,7 @@
             }
             */
 
-            sendData($this->ip_monitor,$this->puerto_monitor,$xml);
+            $this->sendData($this->ip_monitor,$this->puerto_monitor,$xml);
         }
 
 
@@ -497,6 +515,67 @@
             mysql_query($tiendas,$conexion);
         }
 
+
+        function showErrors($tienda,$msg) {
+            
+            if($tienda === NULL) {
+                $error="INSERT INTO Errores (msg) VALUES ('$msg')";
+            }
+            
+            else {
+                $error="INSERT INTO Errores (tienda,msg) VALUES ('$tienda','$msg')";
+            }
+
+          
+            if (!$this->con->query($error)) {
+                printf("Error: %s\n", $this->con->error);
+            }
+        }
+        
+        //=====================================================================================
+	    // AUTOR: BERNARDO MARTINEZ PARRAS
+        // NOMBRE:sendData
+	    // DESCRIPCIÓN: Envia datos a la direccion y puerto especificado mediante la funcion
+	    //				predefinida curl de php
+	    // ARGUMENTOS:
+	    //	$ip: Ip de destino de los datos que queremos enviar
+	    //	$port: Puerto de destino de los datos que queremos enviar
+	    //	$input_data: Fichero xml que vamos a enviar 
+
+	    // FUENTE: 
+	    //	https://stackoverflow.com/questions/7916184/how-to-properly-send-and-receive-xml-using-curl
+	    //	http://php.net/manual/es/book.curl.php
+
+        // SALIDA : Un string representando el resultado de la tranferencia que nos devuelve
+	    //			el sistema ubicado en la ip y puerto de destino
+        //====================================================================================
+        function sendData($ip,$port,$input_data) {
+		
+            //Establecemos la cabecera del mensaje indicando el formato y la longitud del mismo
+            $headers = array(
+                "Content-type: application/xml",
+                "Content-length: " . strlen($input_data)
+            );
+        
+            $ch = curl_init(); //Inicia sesión cURL
+        
+            //Configura las opciones para una transferencia cURL
+        
+            curl_setopt($ch, CURLOPT_URL, $ip); //Establecemos la ip de destino de conexion
+            curl_setopt($ch, CURLOPT_PORT, $port); //Establecemos el puerto de destino de conexion
+            curl_setopt($ch, CURLOPT_POST, true); //Indicamos que queremos hacer una peticion post
+            curl_setopt($ch, CURLOPT_HTTPHEADER, $headers); //Establecemos la cabecera descrita anteriormente
+            curl_setopt($ch, CURLOPT_POSTFIELDS,$input_data); //Establecemos todos los datos a enviar mediante la peticion post
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); //TRUE para devolver el resultado de la transferencia como string
+            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 300); //Numero de segundos a esperar cuando se está intentado conecta
+            $this->showErrors(NULL,"dentros");
+            $data = curl_exec($ch); //Establece una sesión cURL
+            $this->showErrors(NULL,$data);
+            curl_close($ch); //Cierra una sesión cURL
+            
+            //Devolvemos el resultado de la transferencia de datos
+            return $data;
+        }
 
     }
 

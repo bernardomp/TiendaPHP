@@ -1,13 +1,16 @@
 <?php 
 	include "AgenteTienda.php";
 	
-	$ip_monitor = "192.168.1.224/init";
-	$port_monitor = 8081;
+	$ip_monitor = "172.19.254.180/init";
+	$port_monitor = 3000;
 
-	$ip_tienda = "192.168.1.224";
+	$ip_tienda = "172.19.177.1";
 	$port_tienda = 80;
 
+
 	$tienda = new AgenteTienda($ip_monitor,$port_monitor,$ip_tienda,$port_tienda);
+	
+	$tienda->conexionBBDD("localhost", "root", "toor", "multiagentes");
 	//Enviamos peticion al monitor para solicitar identificador
 	$tienda->solicitarTiendas();
 
