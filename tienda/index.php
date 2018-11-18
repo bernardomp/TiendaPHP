@@ -22,7 +22,7 @@
 	//Procesamiento del XML recibido
 	$tienda->setXML($postData);
 	
-	//Obtenemos el tipo de peticion
+	//Obtenemos el tipo de peticion buscando en el fichero xml
 	$tipo_req = $tienda->getXML()->getElementsByTagName('tipo')->item(0)->nodeValue;
 
 	if($tipo_req == "evento") {
@@ -33,9 +33,9 @@
 	//Ejecutamos una accion de la tienda
 	switch($tipo_req) {
 
-		//Obtenemos id tienda del monitor
-		case "Inicio registrado":
-			$tienda->obtenerTiendaID();
+		//Iniciamos el stock de las tiendas recibidos del monitor
+		case "inicializacion":
+			$tienda->iniciarTiendaStock();
 			break;
 
 		//El monitor indica el inicio de la simulacion
@@ -60,7 +60,7 @@
 			break;
 		
 		default:
-			$tienda->showErrors(NULL,"Index: No se que ejecutar");
+			$tienda->showErrors(NULL,"Opcion:".$tipo_req. " no disponible.");
 
 	}
 	

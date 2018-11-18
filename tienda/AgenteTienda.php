@@ -40,7 +40,6 @@
 
         public function getXML() {
             return $this->xml;
-
         }
 
         public function setXML($data) {
@@ -50,8 +49,10 @@
                 echo 'Error al convertir el documento xml';
                 $this->showErrors(NULL,"Error parsing xml");
                 exit;
-	        }
-            $this->xml = $xml;
+            }
+            else {
+                $this->xml = $xml;
+            }
         }
 
 
@@ -127,11 +128,11 @@
                 */
         
                 $this->showErrors(NULL,"antes");
-               $response = $this->sendData($this->ip_monitor,$this->puerto_monitor,$xml);
-               $this->showErrors(NULL,"despues".$response);
-               $this->setXML($response);
-               $this->obtenerTiendaID();
-               $this->showErrors(NULL,"sfdsfsaaaa");
+                $response = $this->sendData($this->ip_monitor,$this->puerto_monitor,$xml);
+                $this->showErrors(NULL,"despues".$response);
+                $this->setXML($response);
+                $this->obtenerTiendaID();
+                $this->showErrors(NULL,"sfdsfsaaaa");
             }
 
         }
@@ -200,11 +201,11 @@
                 $stock_query = "INSERT INTO stock VALUES ('$tienda','$nom_prod', '$cant_prod')";
 
                 if (!$this->con->query($producto_query)) {
-                    printf("Error Producto: %s\n", $this->con->error);
+                    $this->showErrors($tienda,"Error Producto: ");
                 }
 
                 if (!$this->con->query($stock_query)) {
-                    printf("Error Stock: %s\n", $this->con->error);
+                    $this->showErrors($tienda,"Error Producto: ");
                 }
 
             }
@@ -248,7 +249,8 @@
             }
             */
 
-            $this->sendData($this->ip_monitor,$this->puerto_monitor,$xml);
+            //$this->sendData($this->ip_monitor,$this->puerto_monitor,$xml);
+            echo $xml; //Con echo debe ser suficiente
         }
 
 
@@ -334,7 +336,9 @@
             $doc->getElementsByTagName('msg')->item(0)->nodeValue = "OK";
 
             $xml =  $doc->saveXML();
-            sendData($ipCliente,$puertoCliente,$xml);
+            //$this->sendData($ipCliente,$puertoCliente,$xml);
+            //Con echo debe ser suficiente
+            echo $xml;
         }
 
 
@@ -488,7 +492,7 @@
             }
 
             $xml =  $doc->saveXML();
-            sendData($ipCliente,$puertoCliente,$xml);
+            //$this->sendData($ipCliente,$puertoCliente,$xml);
             echo $xml;
         
             
