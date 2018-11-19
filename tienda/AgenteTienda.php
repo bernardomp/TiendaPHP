@@ -193,19 +193,22 @@
                 $nom_prod = $producto->getElementsByTagName('nombre')->item(0)->nodeValue;
                 $cant_prod = $producto->getElementsByTagName('cantidad')->item(0)->nodeValue;
 
+                $nom_prod = trim($nom_prod);
+                $cant_prod = intval($cant_prod);
+
                 $producto_query = "INSERT INTO producto VALUES ('$nom_prod')";
                 $stock_query = "INSERT INTO stock VALUES ('$tienda','$nom_prod', '$cant_prod')";
 
                 if (!$this->con->query($producto_query)) {
-                    $this->showErrors($tienda,"Error Producto: ");
+                    $this->showErrors($tienda,"Error Producto: ".$nom_prod." Cantidad: ".$cant_prod. " Tienda: ".$tienda);
                 }
 
                 if (!$this->con->query($stock_query)) {
-                    $this->showErrors($tienda,"Error Producto: ");
+                    $this->showErrors($tienda,"Error Stock".$nom_prod." Cantidad:".$cant_prod. "Tienda: ".$tienda);
                 }
 
             }
-            $this->showErrors($tienda,"Hola");
+            $this->showErrors($tienda,"Hola".$this->con->error);
             $this->agenteIniciado($tienda);
         }
 
@@ -401,11 +404,14 @@
         //====================================================================================  
         public function finSimulacion(){
 
+            /*
             $cerrar_simulacion="UPDATE tienda SET estado=0";
         
             if (!$this->con->query($cerrar_simulacion)) {
                 printf("Error: %s\n", $this->con->error);
-            }
+            }*/
+
+            $this->resetAgente();
         }
         
 
@@ -575,6 +581,40 @@
             
             //Devolvemos el resultado de la transferencia de datos
             return $data;
+        }
+
+        function resetAgente() {
+            $query1 = "DELETE FROM cliente";
+            $query2 = "DELETE FROM clientetienda";
+            $query3 = "DELETE  FROM errores";
+            $query4 = "DELETE FROM producto";
+            $query5 = "DELETE  FROM stock";
+            $query6 = "DELETE  FROM tienda";
+    
+            if (!$this->con->query($query3)) {
+                printf("Error: %s\n", $this->con->error);
+            }
+
+            if (!$this->con->query($query5)) {
+                printf("Error: %s\n", $this->con->error);
+            }
+
+            if (!$this->con->query($query4)) {
+                printf("Error: %s\n", $this->con->error);
+            }
+
+            if (!$this->con->query($query2)) {
+                printf("Error: %s\n", $this->con->error);
+            }
+
+            if (!$this->con->query($query6)) {
+                printf("Error: %s\n", $this->con->error);
+            }
+
+            if (!$this->con->query($query1)) {
+                printf("Error: %s\n", $this->con->error);
+            }
+    
         }
 
     }

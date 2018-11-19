@@ -5,6 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Page Title</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="refresh" content="3">
 
     <style>
             .flex {
@@ -33,7 +34,7 @@
             $.ajax({
                 method: "POST",
                 url: "initservice.php",
-                data:{number:1}
+                data:{number:document.getElementById("number").value}
             })
             .done(function(a) {
                 console.log("Correcto: Solicitar tienda");
@@ -57,7 +58,7 @@
     <div id="menu">
         
         <input type="submit" value="Request Tienda" onclick="requestTienda()">
-        <input type="number" value=3 name="number">
+        <input type="number" value=3 name="number" id="number">
     
         
     </div>

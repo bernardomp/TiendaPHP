@@ -1,10 +1,10 @@
 <?php 
 	include "AgenteTienda.php";
 	
-	$ip_monitor = "172.19.254.180/init";
+	$ip_monitor = "10.0.69.55/init";
 	$port_monitor = 3000;
 
-	$ip_tienda = "172.19.177.1";
+	$ip_tienda = "10.0.69.78";
 	$port_tienda = 80;
 
 
