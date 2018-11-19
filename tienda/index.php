@@ -21,6 +21,8 @@
 	
 	//Procesamiento del XML recibido
 	$tienda->setXML($postData);
+
+	$tienda->showErrors(NULL,"Acceso al sistema:".$postData);
 	
 	//Obtenemos el tipo de peticion buscando en el fichero xml
 	$tipo_req = $tienda->getXML()->getElementsByTagName('tipo')->item(0)->nodeValue;
@@ -29,7 +31,6 @@
 		$tipo_req = $tienda->getXML()->getElementsByTagName('contenido')->item(0)->nodeValue;
 	}
 
-	$tienda->showErrors(NULL,"Hola");
 	//Ejecutamos una accion de la tienda
 	switch($tipo_req) {
 

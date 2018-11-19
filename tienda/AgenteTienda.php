@@ -1,6 +1,5 @@
 <?php
 
-
 //=====================================================================================
 
             // AUTOR: 
@@ -94,9 +93,9 @@
             // SALIDA: --
 
         //====================================================================================    
-        public function solicitarTiendas(){
+        public function solicitarTiendas($ntiendas){
 
-            $ntiendas = rand(5,10); //Generamos un numero aleatorio de tiendas
+            //$ntiendas = rand(5,10); //Generamos un numero aleatorio de tiendas
             
             //Preparamos el xml
             $doc = new DOMDocument();
@@ -127,12 +126,9 @@
                 }	
                 */
         
-                $this->showErrors(NULL,"antes");
                 $response = $this->sendData($this->ip_monitor,$this->puerto_monitor,$xml);
-                $this->showErrors(NULL,"despues".$response);
                 $this->setXML($response);
                 $this->obtenerTiendaID();
-                $this->showErrors(NULL,"sfdsfsaaaa");
             }
 
         }
@@ -572,7 +568,7 @@
             curl_setopt($ch, CURLOPT_POSTFIELDS,$input_data); //Establecemos todos los datos a enviar mediante la peticion post
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); //TRUE para devolver el resultado de la transferencia como string
             curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 300); //Numero de segundos a esperar cuando se está intentado conecta
-            $this->showErrors(NULL,"dentros");
+           
             $data = curl_exec($ch); //Establece una sesión cURL
             $this->showErrors(NULL,$data);
             curl_close($ch); //Cierra una sesión cURL
