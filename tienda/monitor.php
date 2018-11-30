@@ -15,6 +15,17 @@
                 align-content: flex-start;
             }
 
+            .formElement {
+                text-align:center;
+                font-size:1rem;
+                color: #495057;
+                background-color: #fff;
+                background-clip: padding-box;
+                border: 1px solid #ced4da;
+                border-radius: .25rem;
+                transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+            }
+
             .flexitem {
                 margin:5px;
                 padding:5px;
@@ -25,6 +36,12 @@
             #log {
                 overflow:auto;
             }
+
+            #menu {
+                margin:2%;
+            }
+
+
 
             .gridcontainer {
                 display: grid;
@@ -77,6 +94,17 @@
             });
         }
 
+        function borrarBBDD() {
+            $.ajax({
+                method: "POST",
+                url: "funciones.php",
+                data:{method:"borrarBBDD"}
+            })
+            .done(function(data) {
+                $('#log').html(data);
+            });
+        }
+
     </script>
 </head>
 <body>
@@ -90,24 +118,27 @@
 
     ?>
 
-    <div class="fluid-container">
         
-        <div id="info" class="gridcontainer">
+    <div id="info" class="gridcontainer">
 
             <div id="menu">
-        
-                <input type="button" value="Request Tienda" onclick="requestTiendas()">
-                <input type="number" value=3 name="number" id="number">
 
+                <div style="text-align:center">
+                    <input type="button" value="Request Tienda" onclick="requestTiendas()" class="btn btn-secondary">
+                    <input type="number" value=3 name="number" id="number" class="formElement">
+                    <input type="button" value="Borrar Tiendas" onclick="borrarBBDD()" class="btn btn-danger">
+
+                </div>
+        
+               
                 <div class="flex" id="tiendas"></div>
 
             </div>
 
             <div id="log"></div>
 
-        </div>
-    
     </div>
+
     
 </body>
 </html>

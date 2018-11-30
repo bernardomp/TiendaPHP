@@ -1,5 +1,5 @@
 <?php
-
+    header("Access-Control-Allow-Origin: *");
 //=====================================================================================
 
             // AUTOR: 
@@ -46,7 +46,7 @@
 
             if (!$xml->loadXML($data)) {
                 echo 'Error al convertir el documento xml';
-                $this->showErrors(NULL,"Error parsing xml");
+                $this->showErrors(NULL,"Error parsing ".$data);
                 exit;
             }
             else {
@@ -155,6 +155,7 @@
             */
 
             $idTienda = $this->xml->getElementsByTagName('nuevoID')->item(0)->nodeValue;
+           
             $init_tienda="INSERT INTO tienda (id) VALUES ('$idTienda')";
             
             if (!$this->con->query($init_tienda)) {
@@ -209,7 +210,7 @@
 
             }
             $this->showErrors($tienda,"Hola".$this->con->error);
-            $this->agenteIniciado($tienda);
+            return $this->agenteIniciado($tienda);
         }
 
 
@@ -249,7 +250,8 @@
             */
 
             //$this->sendData($this->ip_monitor,$this->puerto_monitor,$xml);
-            echo $xml; //Con echo debe ser suficiente
+            //echo $xml; //Con echo debe ser suficiente
+            return $xml;
         }
 
 
@@ -274,6 +276,9 @@
             }*/
         
             $id_tienda = $this->xml->getElementsByTagName('id')->item(0)->nodeValue;
+
+            
+            $id_tienda = intval($id_tienda);
         
             $abrir_tienda="UPDATE tienda SET estado=1 WHERE id='$id_tienda'";
         
@@ -307,6 +312,9 @@
             $ipCliente = $this->xml->getElementsByTagName('ip')->item(0)->nodeValue;
             $puertoCliente = $this->xml->getElementsByTagName('puerto')->item(0)->nodeValue;
             $idTienda = $this->xml->getElementsByTagName('id')->item(1)->nodeValue;
+
+            
+            $puertoCliente = intval($puertoCliente);
             
             $entrar_tienda="INSERT INTO cliente (ip,puerto,idCliente,tiendaActual) VALUES ('$ipCliente','$puertoCliente','$idCliente','$idtienda')";
             
@@ -361,6 +369,9 @@
             */
             
             $id_cliente = $datos->getElementsByTagName('id')->item(0)->nodeValue;
+
+          
+            $id_cliente = intval($id_cliente);
             $salir_tienda="DELETE FROM cliente WHERE idcliente = '$id_cliente'";
             
             if (!$this->con->query($entrar_tienda)) {
@@ -383,6 +394,8 @@
         public function cerrarTienda(){
 
             $id_tienda = $this->xml->getElementsByTagName('id')->item(1)->nodeValue;
+
+            $id_tienda = trim($id_tienda);
             $cerrar_tienda="UPDATE tienda SET estado=0 WHERE id = '$id_tienda'";
         
             if (!$this->con->query($cerrar_tienda)) {
@@ -457,7 +470,9 @@
             $puertoCliente = $this->xml->getElementsByTagName('puerto')->item(0)->nodeValue;
 
             $producto = $this->xml->getElementsByTagName('nombre')->item(0)->nodeValue;
+
             $cant = $this->xml->getElementsByTagName('cantidad')->item(0)->nodeValue;
+            $cant = intval($cant);
 
             $doc = new DOMDocument();
             $doc->load('xml/respuestacomprar.xml');
@@ -477,6 +492,8 @@
 
             if($cant>=1) {
                 //vendemos el producto y modificamos el stock de la tienda
+                $producto= trim($producto);
+                
                 $actualizar_stock="UPDATE Stock SET cantidad = cantidad-'$cant' WHERE idproducto='$producto'";
 
                 //actualizamos el stock de ese producto en la tienda 

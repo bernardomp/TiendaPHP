@@ -1,13 +1,14 @@
 <?php 
+	header("Access-Control-Allow-Origin: *");
 	include "AgenteTienda.php";
 
 	//Evitar mostrar algunas advertencias
 	error_reporting(E_ERROR | E_PARSE); 
 
-	$ip_monitor = "172.19.254.180";
+	$ip_monitor = "10.0.69.39";
 	$port_monitor = 3000;
 
-	$ip_tienda = " 172.19.177.1";
+	$ip_tienda = " 10.0.69.78";
 	$port_tienda = 80;
 
 	//Recepcion de los datos 
@@ -34,9 +35,11 @@
 	//Ejecutamos una accion de la tienda
 	switch($tipo_req) {
 
-		//Iniciamos el stock de las tiendas recibidos del monitor
+		//Iniciamos el stock de las tiendas recibidas del monitor
 		case "inicializacion":
-			$tienda->iniciarTiendaStock();
+			$dat = $tienda->iniciarTiendaStock();
+			$tienda->showErrors(NULL,"Enviado ACK inicializacion".$dat);
+			echo $dat;
 			break;
 
 		//El monitor indica el inicio de la simulacion

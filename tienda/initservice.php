@@ -1,7 +1,8 @@
 <?php 
+	header("Access-Control-Allow-Origin: *");
 	include "AgenteTienda.php";
 	
-	$ip_monitor = "10.0.69.55/init";
+	$ip_monitor = "10.0.69.39/init";
 	$port_monitor = 3000;
 
 	$ip_tienda = "10.0.69.78";

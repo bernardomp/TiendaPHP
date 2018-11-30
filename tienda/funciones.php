@@ -1,5 +1,5 @@
 <?php
-
+    header("Access-Control-Allow-Origin: *");
     if(!isset($_POST["method"])) {
         die();
     }
@@ -18,9 +18,47 @@
         case 'updateLog':
             updateLog($con);
             break;
+
+        case 'borrarBBDD':
+            borrarBBDD($con);
+            break;
         
         default:
             break;
+    }
+
+    function borrarBBDD($con) {
+        $query1 = "DELETE FROM cliente";
+        $query2 = "DELETE FROM clientetienda";
+        $query3 = "DELETE  FROM errores";
+        $query4 = "DELETE FROM producto";
+        $query5 = "DELETE  FROM stock";
+        $query6 = "DELETE  FROM tienda";
+
+        if (!$con->query($query3)) {
+            printf("Error: %s\n", $this->con->error);
+        }
+
+        if (!$con->query($query5)) {
+            printf("Error: %s\n", $this->con->error);
+        }
+
+        if (!$con->query($query4)) {
+            printf("Error: %s\n", $this->con->error);
+        }
+
+        if (!$con->query($query2)) {
+            printf("Error: %s\n", $this->con->error);
+        }
+
+        if (!$con->query($query6)) {
+            printf("Error: %s\n", $this->con->error);
+        }
+
+        if (!$con->query($query1)) {
+            printf("Error: %s\n", $this->con->error);
+        }
+
     }
     
     function updateLog($con) {     
