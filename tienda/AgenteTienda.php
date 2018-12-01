@@ -1,18 +1,21 @@
 <?php
     header("Access-Control-Allow-Origin: *");
-//=====================================================================================
+
+        //=====================================================================================
 
             // AUTOR: 
             // CLASE: AgenteTienda
-            // DESCRIPCIÓN:
+            // DESCRIPCIÓN: 
+            //  Esta clase representa a una tienda de nuestro "hotel" de tienda. En esta clase se implementan los 
+            //  metodos necesarios para realizar las funciones propias de la tienda
 
             // ATRIBUTOS:
-            //	$ip_monitor: direccion ip del host
-            //	$puerto_monitor: nombre del usuario
-            //	$ip_tienda: password del usuario
-            //	$puerto_tienda: nombre de la base de datos
-            //  $con:Conexion a la BBDD
-            //  $xml: 
+            //	$ip_monitor: Dirección ip del monitor
+            //	$puerto_monitor: Puerto ip del monitor
+            //	$ip_tienda: Dirección ip de la tienda
+            //	$puerto_tienda: Puerto ip de la tienda
+            //  $con: Conexion a la BBDD
+            //  $xml: Fichero xml que el agente ha recibido del monitor o de un cliente
 
 
         //==================================================================================== 
@@ -28,6 +31,21 @@
         private $xml;
 
 
+        //=====================================================================================
+
+            // AUTOR: 
+            // CLASE: AgenteTienda
+            // DESCRIPCIÓN: 
+            //  Constructor que inicializa algunos atributos de la clase AgenteTienda
+            //  
+
+            // ARGUMENTOS:
+            //	$ip_monitor: Dirección ip del monitor
+            //	$puerto_monitor: Puerto ip del monitor
+            //	$ip_tienda: Dirección ip de la tienda
+            //	$puerto_tienda: Puerto ip de la tienda
+
+        //==================================================================================== 
         function __construct($ip_monitor,$puerto_monitor,$ip_tienda,$puerto_tienda) {
             $this->ip_monitor = $ip_monitor;
             $this->puerto_monitor = $puerto_monitor;
@@ -37,6 +55,16 @@
             
         }
 
+        //=====================================================================================
+
+            // AUTOR: 
+            // NOMBRE: getXML
+            // DESCRIPCIÓN: Devuelve la propiedad xml de la clase AgenteTienda
+            // ARGUMENTOS:
+            // FUENTE: 
+            // SALIDA: xml que el agente tienda ha recibido
+
+        //====================================================================================   
         public function getXML() {
             return $this->xml;
         }
@@ -46,7 +74,7 @@
 
             if (!$xml->loadXML($data)) {
                 echo 'Error al convertir el documento xml';
-                $this->showErrors(NULL,"Error parsing ".$data);
+                $this->consoleLog(NULL,"Error parsing ".$data);
                 exit;
             }
             else {
@@ -70,7 +98,7 @@
             // FUENTE: 
             //	http://php.net/manual/es/book.curl.php
 
-            // SALIDA: --
+            // SALIDA: 
 
         //====================================================================================        
         public function conexionBBDD($ip,$user,$password,$database) {
@@ -88,29 +116,30 @@
             // AUTOR: 
             // NOMBRE: solicitarTiendas
             // DESCRIPCIÓN: Manda peticion al monitor con nuestra ip y puerto para que cree las tiendas
-            // ARGUMENTOS: --
+            // ARGUMENTOS: 
+            //  $ntiendas: Establece el numero de tiendas que solicitaremos al monitor
             // FUENTE: --
             // SALIDA: --
 
         //====================================================================================    
         public function solicitarTiendas($ntiendas){
-
-            //$ntiendas = rand(5,10); //Generamos un numero aleatorio de tiendas
             
-            //Preparamos el xml
+            //Preparamos el xml a enviar
             $doc = new DOMDocument();
-            $doc->load('xml/peticionconexion.xml');
+            $doc->load('../SistemasMultiagentes2018/Grupos/G6/EjemploPeticionConexion.xml');
         
-            //Rellenamos fichero xml
+            //Indicamos en el xml la ip del monitor y de la tienda
             $doc->getElementsByTagName('ip')->item(0)->nodeValue = $this->ip_tienda;
             $doc->getElementsByTagName('ip')->item(1)->nodeValue = $this->ip_monitor;
         
+            //Indicamos en el xml el puerto del monitor y de la tienda
             $doc->getElementsByTagName('puerto')->item(0)->nodeValue = $this->puerto_tienda;
             $doc->getElementsByTagName('puerto')->item(1)->nodeValue = $this->puerto_monitor;
             
+            //Enviamos el xml por cada tienda que solicitamos
             for ($i = 0; $i<$ntiendas; $i++){
-                //mandamos peticion al monitor para cada una de las tiendas pasandole la ip y puerto
-        
+               
+                
                 $xml =  $doc->saveXML();
                     
                 /*
@@ -125,9 +154,14 @@
                     sendData($ip_dst,$port_dst,$xml); 
                 }	
                 */
-        
+                
+                //Enviamos el xml generado a la ip y puerto del monitor
                 $response = $this->sendData($this->ip_monitor,$this->puerto_monitor,$xml);
+
+                //Obtenemos y guardamos la respuesta obtenida del monitor
                 $this->setXML($response);
+                
+                //Procesamos la informacion recibida
                 $this->obtenerTiendaID();
             }
 
@@ -139,7 +173,7 @@
 
             // AUTOR: 
             // NOMBRE: obtenerTiendaID
-            // DESCRIPCIÓN: Recibe los id de las tiendas desde el monitor
+            // DESCRIPCIÓN: Procesa la informacion recibida del monitor una vez que hemos solicitado una tienda
             // ARGUMENTOS: --
             // FUENTE: --
             // SALIDA: --
@@ -154,10 +188,13 @@
             }
             */
 
+            //Obtenemos el identificador de la tienda que el monitor nos ha asignado
             $idTienda = $this->xml->getElementsByTagName('nuevoID')->item(0)->nodeValue;
            
+            //Creamos una nueva tienda en la BBDD con ese identificador
             $init_tienda="INSERT INTO tienda (id) VALUES ('$idTienda')";
             
+            //Ejecutamos la consulta en la BBDD
             if (!$this->con->query($init_tienda)) {
                 printf("Error: %s\n", $this->con->error);
             }
@@ -173,7 +210,8 @@
             // DESCRIPCIÓN: Inicializa el stock para cada tienda
             // ARGUMENTOS: --
             // FUENTE: --
-            // SALIDA: --
+            // SALIDA: Devuelve la salida de la funcion agenteIniciado, que basicamente es un
+            //          fichero xml enviado al monitor que indica que hemos iniciado nuestra tienda
 
         //====================================================================================         
         public function iniciarTiendaStock(){
@@ -186,30 +224,46 @@
             }
             */
 
+            //Del fichero xml recibido obtenemos la lista de productos
             $productos = $this->xml->getElementsByTagName('producto');
+
+            //Obtenemos la tienda a la que pertenecen los productos recibidos
             $tienda = $this->xml->getElementsByTagName('id')->item(0)->nodeValue;
 
+            //Iteramos sobre la lista de productos recibida
             foreach($productos as $producto) {
         
+                //Para cada producto obtenemos su nombre y cantidad
                 $nom_prod = $producto->getElementsByTagName('nombre')->item(0)->nodeValue;
                 $cant_prod = $producto->getElementsByTagName('cantidad')->item(0)->nodeValue;
 
+                //Eliminamos posibles espacios en blanco
                 $nom_prod = trim($nom_prod);
+
+                //Convertimos la cantidad de productos a un numero entero
                 $cant_prod = intval($cant_prod);
 
+                //Insertamos el producto en la BBDD
                 $producto_query = "INSERT INTO producto VALUES ('$nom_prod')";
+
+                //Insertamos en la BBDD el stock que existe entre un producto y una tienda
                 $stock_query = "INSERT INTO stock VALUES ('$tienda','$nom_prod', '$cant_prod')";
 
+                /*
+                Verificamos que la consulta se ejecuta correctamente.
+                En caso contrario, almacenamos en la base de datos un mensaje de error
+                */
+
                 if (!$this->con->query($producto_query)) {
-                    $this->showErrors($tienda,"Error Producto: ".$nom_prod." Cantidad: ".$cant_prod. " Tienda: ".$tienda);
+                    $this->consoleLog($tienda,"Error Producto: ".$nom_prod." Cantidad: ".$cant_prod. " Tienda: ".$tienda);
                 }
 
                 if (!$this->con->query($stock_query)) {
-                    $this->showErrors($tienda,"Error Stock".$nom_prod." Cantidad:".$cant_prod. "Tienda: ".$tienda);
+                    $this->consoleLog($tienda,"Error Stock".$nom_prod." Cantidad:".$cant_prod. "Tienda: ".$tienda);
                 }
 
             }
-            $this->showErrors($tienda,"Hola".$this->con->error);
+            //$this->consoleLog($tienda,"Hola".$this->con->error);
             return $this->agenteIniciado($tienda);
         }
 
@@ -219,27 +273,38 @@
 
             // AUTOR: 
             // NOMBRE: agenteIniciado
-            // DESCRIPCIÓN: iniciamos todos los agentes tienda
+
+            // DESCRIPCIÓN: Este metodo confirma al monitor que una determinada tienda está preparada
+            //              formar parte de la simulacion
+
             // ARGUMENTOS:
-            //  $tienda: le pasamos como parametro la tienda que queremos inicializar
+            //  $tienda: Indica la tienda que hemos iniciado correctamente
+
             // FUENTE: --
-            // SALIDA: --
+            // SALIDA: Envia al monitor un fichero indicando que una tienda se ha iniciado correctamente
 
         //====================================================================================           
         public function agenteIniciado($tienda) {
 
+            //Cargamos la plantilla xml adecuada
             $doc = new DOMDocument();
-            $doc->load('xml/ackagenteiniciado.xml');
+            $doc->load('../SistemasMultiagentes2018/Grupos/G6/EjemploACKAgenteIniciado.xml');
         
-            //Rellenamos fichero xml
+            //Rellenamos fichero xml con la ip de la tienda y el monitor
             $doc->getElementsByTagName('ip')->item(0)->nodeValue = $this->ip_tienda;
             $doc->getElementsByTagName('ip')->item(1)->nodeValue = $this->ip_monitor;
         
+            //Indicamos de que tipo es nuestro agente
+            $doc->getElementsByTagName('rol')->item(0)->nodeValue = "Tienda";
+
+            //Rellenamos fichero xml con el puerto de la tienda y el monitor
             $doc->getElementsByTagName('puerto')->item(0)->nodeValue = $this->puerto_tienda;
             $doc->getElementsByTagName('puerto')->item(1)->nodeValue = $this->puerto_monitor;
-                
+            
+            //Establecemos el identificador de nuestra tienda
             $doc->getElementsByTagName('id')->item(0)->nodeValue = $tienda;
-                
+            
+            //Guardamos los cambio efectuados
             $xml =  $doc->saveXML();
                   
             /*
@@ -251,6 +316,8 @@
 
             //$this->sendData($this->ip_monitor,$this->puerto_monitor,$xml);
             //echo $xml; //Con echo debe ser suficiente
+
+            //Devolvemos el fichero generado
             return $xml;
         }
 
@@ -260,11 +327,10 @@
 
             // AUTOR: 
             // NOMBRE: iniciarSimulacion
-            // DESCRIPCIÓN: Inicia la simulacion 
-            // ARGUMENTOS: mandamos una petición al monitor para que inicie la simulación de
-            //              la parte servidor
+            // DESCRIPCIÓN: Inicia la simulacion estableciendo el estado de nuestras tiendas como abierto
+            // ARGUMENTOS: --
             // FUENTE: --
-            // SALIDA: en caso de fallo muestra un error
+            // SALIDA: En caso de fallo muestra un error
 
         //====================================================================================           
         public function iniciarSimulacion() {
@@ -275,13 +341,16 @@
                 libxml_display_errors();
             }*/
         
+            //Obtenemos el identificador de la tienda que va a entrar en la simulacion
             $id_tienda = $this->xml->getElementsByTagName('id')->item(0)->nodeValue;
 
-            
+            //Convertimos el identificador a un numero entero
             $id_tienda = intval($id_tienda);
         
+            //Establecemos el estado de esta tienda como abierta
             $abrir_tienda="UPDATE tienda SET estado=1 WHERE id='$id_tienda'";
         
+            //Comprobamos que la consulta se ejecuta correctamente
             if (!$this->con->query($abrir_tienda)) {
                 printf("Error: %s\n", $this->con->error);
             }
@@ -311,6 +380,7 @@
             $idCliente = $this->xml->getElementsByTagName('id')->item(0)->nodeValue;
             $ipCliente = $this->xml->getElementsByTagName('ip')->item(0)->nodeValue;
             $puertoCliente = $this->xml->getElementsByTagName('puerto')->item(0)->nodeValue;
+            
             $idTienda = $this->xml->getElementsByTagName('id')->item(1)->nodeValue;
 
             
@@ -539,7 +609,7 @@
         }
 
 
-        function showErrors($tienda,$msg) {
+        function>consoleLog($tienda,$msg) {
             
             if($tienda === NULL) {
                 $error="INSERT INTO Errores (msg) VALUES ('$msg')";
@@ -593,7 +663,7 @@
             curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 300); //Numero de segundos a esperar cuando se está intentado conecta
            
             $data = curl_exec($ch); //Establece una sesión cURL
-            $this->showErrors(NULL,$data);
+            $this->consoleLog(NULL,$data);
             curl_close($ch); //Cierra una sesión cURL
             
             //Devolvemos el resultado de la transferencia de datos

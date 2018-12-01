@@ -1,5 +1,17 @@
 <?php
-    
+    //=====================================================================================
+
+            // AUTOR: 
+            // NOMBRE: test.php
+            // DESCRIPCIÓN: Este fichero permite tanto al monitor como al cliente verificar si es posible establecer
+            //              la comunicación con nuestra tienda. Este archivo es fudamental para verifIcar que los clientes
+            //              que utilicen el sistema CORS 
+            // ARGUMENTOS: --
+            // FUENTE: --
+            // SALIDA: Devuelve el string "RECIBIDO, CON CARIÑO"
+
+     //====================================================================================         
+
 
     if (isset($_SERVER['HTTP_ORIGIN'])) {
         header("Access-Control-Allow-Origin: {$_SERVER['HTTP_ORIGIN']}");
@@ -19,5 +31,5 @@
         exit(0);
     }
 
-echo "RECIBIDO, CON CARIÑO";
+    echo "RECIBIDO, CON CARIÑO";
 ?>

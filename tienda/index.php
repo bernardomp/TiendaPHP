@@ -23,7 +23,7 @@
 	//Procesamiento del XML recibido
 	$tienda->setXML($postData);
 
-	$tienda->showErrors(NULL,"Acceso al sistema:".$postData);
+	$tienda->consoleLog(NULL,"Acceso al sistema:".$postData);
 	
 	//Obtenemos el tipo de peticion buscando en el fichero xml
 	$tipo_req = $tienda->getXML()->getElementsByTagName('tipo')->item(0)->nodeValue;
@@ -38,7 +38,7 @@
 		//Iniciamos el stock de las tiendas recibidas del monitor
 		case "inicializacion":
 			$dat = $tienda->iniciarTiendaStock();
-			$tienda->showErrors(NULL,"Enviado ACK inicializacion".$dat);
+			$tienda->consoleLog(NULL,"Enviado ACK inicializacion".$dat);
 			echo $dat;
 			break;
 
@@ -64,7 +64,7 @@
 			break;
 		
 		default:
-			$tienda->showErrors(NULL,"Opcion:".$tipo_req. " no disponible.");
+			$tienda->consoleLog(NULL,"Opcion:".$tipo_req. " no disponible.");
 
 	}
 	
