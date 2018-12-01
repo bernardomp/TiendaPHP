@@ -609,7 +609,7 @@
         }
 
 
-        function>consoleLog($tienda,$msg) {
+        function consoleLog($tienda,$msg) {
             
             if($tienda === NULL) {
                 $error="INSERT INTO Errores (msg) VALUES ('$msg')";
