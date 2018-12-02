@@ -74,10 +74,12 @@
 
             if (!$xml->loadXML($data)) {
                 $this->consoleLog("Error parsing xml ".$data);
+                return false;
             }
-            else {
-                $this->xml = $xml;
-            }
+           
+            $this->xml = $xml;
+            return true;
+            
         }
 
 
@@ -156,11 +158,17 @@
                 //Enviamos el xml generado a la ip y puerto del monitor
                 $response = $this->sendData($this->ip_monitor,$this->puerto_monitor,$xml);
 
-                //Obtenemos y guardamos la respuesta obtenida del monitor
-                $this->setXML($response);
+                if($response === FALSE) {
+                    $this->consoleLog("Solicitud "$i+1."/".$ntiendas.": Conexion con el monitor erronea");
+                }
+                else {
+                    //Obtenemos y guardamos la respuesta obtenida del monitor
+                    $this->setXML($response);
                 
-                //Procesamos la informacion recibida
-                $this->obtenerTiendaID();
+                    //Procesamos la informacion recibida
+                    $this->obtenerTiendaID();
+                }
+               
             }
 
         }
@@ -536,7 +544,7 @@
             $cant = intval($cant);
 
             $doc = new DOMDocument();
-            $doc->load('xml/respuestacomprar.xml');
+            $doc->load('../SistemasMultiagentes2018/Grupos/G5/respuesta.xml');
 
             //Insertamos los ids
             $doc->getElementsByTagName('id')->item(0)->nodeValue = $idtienda;
@@ -550,9 +558,9 @@
             $doc->getElementsByTagName('puerto')->item(0)->nodeValue = $this->puerto_tienda;
             $doc->getElementsByTagName('puerto')->item(1)->nodeValue = $puertoCliente;
 
-
-            if($cant>=1) {
-                //vendemos el producto y modificamos el stock de la tienda
+            //Verificamos que la cantidad  que quieren comprar en mayor que cero
+            if($cant>0) {
+                
                 $producto= trim($producto);
                 
                 $actualizar_stock="UPDATE Stock SET cantidad = cantidad-'$cant' WHERE idproducto='$producto'";
@@ -568,14 +576,13 @@
 
             else {
                 //Insertamos mensaje
-                $doc->getElementsByTagName('contenido')->item(0)->nodeValue = "No devoluciones";
+                $doc->getElementsByTagName('cantidad')->item(0)->nodeValue = 0;
             }
 
             $xml =  $doc->saveXML();
-            //$this->sendData($ipCliente,$puertoCliente,$xml);
-            echo $xml;
-        
-            
+         
+            return $xml;
+      
         }
 
         
@@ -626,7 +633,6 @@
             curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 300); //Numero de segundos a esperar cuando se está intentado conecta
            
             $data = curl_exec($ch); //Establece una sesión cURL
-            $this->consoleLog($data);
             curl_close($ch); //Cierra una sesión cURL
             
             //Devolvemos el resultado de la transferencia de datos

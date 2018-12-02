@@ -14,6 +14,10 @@
 	//Recepcion de los datos 
 	$postData = file_get_contents('php://input');
 
+	if($postData == "") {
+		die("Recibido con cariño");
+	}
+
 	//Creacion de agente tienda
 	$tienda = new AgenteTienda($ip_monitor,$port_monitor,$ip_tienda,$port_tienda);
 	
@@ -21,7 +25,9 @@
 	$tienda->conexionBBDD("localhost", "root", "toor", "multiagentes");
 	
 	//Procesamiento del XML recibido
-	$tienda->setXML($postData);
+	if (!$tienda->setXML($postData)) {
+		die("Intentalo de nuevo: Tengo problemas con los datos recibidos");
+	}
 
 	$tienda->consoleLog("Acceso al sistema:".$postData);
 	
@@ -48,7 +54,7 @@
 			break;
 
 		case "compra":
-			$tienda->comprarProducto();
+			echo $tienda->comprarProducto();
 			break;
 
 		case "Fin de simulacion":
@@ -60,7 +66,7 @@
 			break;
 		
 		case "salir":
-			$tienda->salirTienda();
+			echo $tienda->salirTienda();
 			break;
 		
 		default:
