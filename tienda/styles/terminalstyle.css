@@ -1,0 +1,45 @@
+.tableCustom td {
+    vertical-align: middle !important;
+}
+
+.flex {
+    display:flex;
+    flex-direction:row;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    align-content: flex-start;
+}
+
+.formElement {
+    text-align:center;
+    font-size:1rem;
+    color: #495057;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid #ced4da;
+    border-radius: .25rem;
+    width: 5em;
+    transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+}
+
+.flexitem {
+    margin:5px;
+    padding:5px;
+    border-style: solid;
+    border-color: grey;
+}
+
+#log {
+    overflow:auto;
+    margin:5px;
+}
+
+#menu {
+    margin:2%;
+}
+
+.gridcontainer {
+    display: grid;
+    grid-template-columns: 65% 35%;
+    justify-items:center;
+}
