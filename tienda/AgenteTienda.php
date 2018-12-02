@@ -73,9 +73,7 @@
             $xml = new DOMDocument();
 
             if (!$xml->loadXML($data)) {
-                echo 'Error al convertir el documento xml';
-                $this->consoleLog(NULL,"Error parsing ".$data);
-                exit;
+                $this->consoleLog("Error parsing xml ".$data);
             }
             else {
                 $this->xml = $xml;
@@ -255,15 +253,15 @@
                 */
 
                 if (!$this->con->query($producto_query)) {
-                    $this->consoleLog($tienda,"Error Producto: ".$nom_prod." Cantidad: ".$cant_prod. " Tienda: ".$tienda);
+                    $this->consoleLog("Error Producto: ".$nom_prod." Cantidad: ".$cant_prod. " Tienda: ".$tienda);
                 }
 
                 if (!$this->con->query($stock_query)) {
-                    $this->consoleLog($tienda,"Error Stock".$nom_prod." Cantidad:".$cant_prod. "Tienda: ".$tienda);
+                    $this->consoleLog("Error Stock".$nom_prod." Cantidad:".$cant_prod. "Tienda: ".$tienda);
                 }
 
             }
-            //$this->consoleLog($tienda,"Hola".$this->con->error);
+      
             return $this->agenteIniciado($tienda);
         }
 
@@ -364,7 +362,8 @@
 
             // AUTOR: 
             // NOMBRE: entrarTienda
-            // DESCRIPCIÓN: Añade al cliente en la tienda en la que se encuentra
+            // DESCRIPCIÓN: Añade al cliente en la tienda en la que quiere acceder y envia al cliente una 
+            //              confirmacion
             // ARGUMENTOS: --
             // FUENTE: --
             // SALIDA: --
@@ -377,24 +376,29 @@
                 libxml_display_errors();
             }*/
             
+            //Extraemos del fichero xml el identificador, ip y puerto del cliente
             $idCliente = $this->xml->getElementsByTagName('id')->item(0)->nodeValue;
             $ipCliente = $this->xml->getElementsByTagName('ip')->item(0)->nodeValue;
             $puertoCliente = $this->xml->getElementsByTagName('puerto')->item(0)->nodeValue;
             
+            //Extraemos del fichero xml el identificador de la tienda a la que quiera entrar el cliente
             $idTienda = $this->xml->getElementsByTagName('id')->item(1)->nodeValue;
 
-            
+    
+            //Convertimos el puerto y el idCliente a valores numerico
             $puertoCliente = intval($puertoCliente);
+            $idCliente = intval($idCliente);
             
+            //Insertamos en la base de datos el nuevo cliente
             $entrar_tienda="INSERT INTO cliente (ip,puerto,idCliente,tiendaActual) VALUES ('$ipCliente','$puertoCliente','$idCliente','$idtienda')";
             
             if (!$this->con->query($entrar_tienda)) {
                 printf("Error: %s\n", $this->con->error);
             }
 
-            //Prepara respuesta
+            //Preparamos el fichero de respuesta para el cliente
             $doc = new DOMDocument();
-            $doc->load('xml/ackentrartienda.xml');
+            $doc->load('../SistemasMultiagentes2018/Grupos/G3/Inicialización_Tienda_Cliente.xml');
 
 
             //Insertamos los ids
@@ -412,8 +416,9 @@
             //Insertamos mensaje
             $doc->getElementsByTagName('msg')->item(0)->nodeValue = "OK";
 
+            //Guardamos los cambios realizados
             $xml =  $doc->saveXML();
-            //$this->sendData($ipCliente,$puertoCliente,$xml);
+        
             //Con echo debe ser suficiente
             echo $xml;
         }
@@ -424,10 +429,11 @@
 
             // AUTOR: 
             // NOMBRE: salirTienda
-            // DESCRIPCIÓN: Borra al cliente de la tienda en la que se encontraba
+            // DESCRIPCIÓN: Borra al cliente de la tienda en la que se encontraba y envia una confirmacion al cliente
+            //              que ha solicitado la peticion
             // ARGUMENTOS: --
             // FUENTE: --
-            // SALIDA: en caso de fallo muestra un error
+            // SALIDA: En caso de fallo muestra un error
 
         //====================================================================================  
         public function salirTienda(){
@@ -438,15 +444,23 @@
             }
             */
             
-            $id_cliente = $datos->getElementsByTagName('id')->item(0)->nodeValue;
+            //Extraemos el identificador del cliente
+            $id_cliente = $this->xml->getElementsByTagName('id')->item(0)->nodeValue;
 
-          
+            //Convertimos el identificador a numero entero
             $id_cliente = intval($id_cliente);
+
+            //Eliminamos al cliente de la BBDD
             $salir_tienda="DELETE FROM cliente WHERE idcliente = '$id_cliente'";
             
+            //Comprobamos que la consulta se ha ejecutado correctamente
             if (!$this->con->query($entrar_tienda)) {
                 printf("Error: %s\n", $this->con->error);
             }
+
+            //Preparamos el fichero de respuesta para el cliente
+            $doc = new DOMDocument();
+            $doc->load('../SistemasMultiagentes2018/Grupos/G2/salirtiendarespuesta.xml');
         }
 
 
@@ -458,7 +472,7 @@
             // DESCRIPCIÓN: Cierra el acceso a la tienda si se queda sin productos
             // ARGUMENTOS: --
             // FUENTE: --
-            // SALIDA: en caso de fallo muestra un error
+            // SALIDA: En caso de fallo muestra un error
 
         //====================================================================================          
         public function cerrarTienda(){
@@ -479,7 +493,7 @@
 
             // AUTOR: 
             // NOMBRE: finSimulacion
-            // DESCRIPCIÓN: El monitor manda una peticion para finalizar el proceso
+            // DESCRIPCIÓN: El monitor manda una peticion para finalizar el proceso y borramos toda nuestra BBDD
             // ARGUMENTOS: --
             // FUENTE: --
             // SALIDA: en caso de fallo muestra un error.
@@ -488,8 +502,6 @@
         public function finSimulacion(){
 
             /*
-            $cerrar_simulacion="UPDATE tienda SET estado=0";
-        
             if (!$this->con->query($cerrar_simulacion)) {
                 printf("Error: %s\n", $this->con->error);
             }*/
@@ -497,27 +509,6 @@
             $this->resetAgente();
         }
         
-
-
-        //=====================================================================================
-
-            // AUTOR: 
-            // NOMBRE: extraerProductos
-            // DESCRIPCIÓN: devuelve el listado de productos de una tienda cuando el cliente
-            //              ha solicitado una peticion para conocer los productos
-            // ARGUMENTOS: ($tienda)
-            // FUENTE: --
-            // SALIDA: lista de productos de una tienda
-
-        //====================================================================================  
-        public function extraerProductos(){
-           
-            $productos='select nombre from producto';
-            mysql_query($productos,$conexion);
-        }
-        
-        
-
 
         //=====================================================================================
 
@@ -588,38 +579,10 @@
         }
 
         
+        function consoleLog($msg) {
 
-        //=====================================================================================
+            $error="INSERT INTO Errores (msg) VALUES ('$msg')";
 
-            // AUTOR: 
-            // NOMBRE: extraerTiendas
-            // DESCRIPCIÓN: nos muestra un listado de tiendas de un cliente que se encuentra
-            //              en la misma tienda.
-            // ARGUMENTOS:
-            //  $conexion: conexion a la base de datos
-            //  $cliente: id del cliente del que queremos saber el listado de tiendas
-            // FUENTE: --
-            // SALIDA: Devuelve el listado de tiendas de un cliente que esta en la misma tienda
-
-        //====================================================================================          
-        function extraerTiendas($conexion,$cliente){
-
-            $tiendas = 'select tiendas from cliente_tiendas where idcliente='.$cliente;
-            mysql_query($tiendas,$conexion);
-        }
-
-
-        function consoleLog($tienda,$msg) {
-            
-            if($tienda === NULL) {
-                $error="INSERT INTO Errores (msg) VALUES ('$msg')";
-            }
-            
-            else {
-                $error="INSERT INTO Errores (tienda,msg) VALUES ('$tienda','$msg')";
-            }
-
-          
             if (!$this->con->query($error)) {
                 printf("Error: %s\n", $this->con->error);
             }
@@ -663,7 +626,7 @@
             curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 300); //Numero de segundos a esperar cuando se está intentado conecta
            
             $data = curl_exec($ch); //Establece una sesión cURL
-            $this->consoleLog(NULL,$data);
+            $this->consoleLog($data);
             curl_close($ch); //Cierra una sesión cURL
             
             //Devolvemos el resultado de la transferencia de datos
