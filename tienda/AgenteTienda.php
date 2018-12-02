@@ -3,7 +3,7 @@
 
         //=====================================================================================
 
-            // AUTOR: 
+            // AUTOR: Mercedes Guijarro
             // CLASE: AgenteTienda
             // DESCRIPCIÓN: 
             //  Esta clase representa a una tienda de nuestro "hotel" de tienda. En esta clase se implementan los 
@@ -30,22 +30,6 @@
         private $con; 
         private $xml;
 
-
-        //=====================================================================================
-
-            // AUTOR: 
-            // CLASE: AgenteTienda
-            // DESCRIPCIÓN: 
-            //  Constructor que inicializa algunos atributos de la clase AgenteTienda
-            //  
-
-            // ARGUMENTOS:
-            //	$ip_monitor: Dirección ip del monitor
-            //	$puerto_monitor: Puerto ip del monitor
-            //	$ip_tienda: Dirección ip de la tienda
-            //	$puerto_tienda: Puerto ip de la tienda
-
-        //==================================================================================== 
         function __construct($ip_monitor,$puerto_monitor,$ip_tienda,$puerto_tienda) {
             $this->ip_monitor = $ip_monitor;
             $this->puerto_monitor = $puerto_monitor;
@@ -427,7 +411,7 @@
             // DESCRIPCIÓN: Borra al cliente de la tienda en la que se encontraba
             // ARGUMENTOS: --
             // FUENTE: --
-            // SALIDA: en caso de fallo muestra un error
+            // SALIDA: en caso de que el cliente no estuviera en la tienda devuelve un error
 
         //====================================================================================  
         public function salirTienda(){
@@ -444,7 +428,7 @@
             $id_cliente = intval($id_cliente);
             $salir_tienda="DELETE FROM cliente WHERE idcliente = '$id_cliente'";
             
-            if (!$this->con->query($entrar_tienda)) {
+            if (!$this->con->query($salir_tienda)) {
                 printf("Error: %s\n", $this->con->error);
             }
         }
@@ -453,12 +437,12 @@
 
         //=====================================================================================
 
-            // AUTOR: 
+            // AUTOR: Mercedes Guijarro
             // NOMBRE: cerrarTienda
             // DESCRIPCIÓN: Cierra el acceso a la tienda si se queda sin productos
             // ARGUMENTOS: --
             // FUENTE: --
-            // SALIDA: en caso de fallo muestra un error
+            // SALIDA: en caso de que la tienda no exista o sea incorrecta devuelve un error
 
         //====================================================================================          
         public function cerrarTienda(){
@@ -482,7 +466,7 @@
             // DESCRIPCIÓN: El monitor manda una peticion para finalizar el proceso
             // ARGUMENTOS: --
             // FUENTE: --
-            // SALIDA: en caso de fallo muestra un error.
+            // SALIDA: 
 
         //====================================================================================  
         public function finSimulacion(){
@@ -515,13 +499,13 @@
             $productos='select nombre from producto';
             mysql_query($productos,$conexion);
         }
-        
+        //***FALTA PASAR LA TIENDA POR PARAMETRO Y CAMBMIAR LA CONSULTA***
         
 
 
         //=====================================================================================
 
-            // AUTOR: 
+            // AUTOR: Mercedes Guijarro
             // NOMBRE: comprarProducto
             // DESCRIPCIÓN: el cliente manda una petición de comprar el producto. Mediante esta
             //              funcion comprobamos en la base de datos que existe el producto y 
@@ -529,6 +513,7 @@
             // ARGUMENTOS: --
             // FUENTE: --
             // SALIDA: devuelve un error si la cantidad es incorrecta 
+	    //		si el producto existe en cantidad suficiente devuelve un xml
 
         //====================================================================================     
         public function comprarProducto(){
