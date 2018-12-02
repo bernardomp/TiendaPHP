@@ -14,8 +14,7 @@
 	$tienda->conexionBBDD("localhost", "root", "toor", "multiagentes");
 	//Enviamos peticion al monitor para solicitar identificador
 
-	$tienda->consoleLog("Solicitando ");
-	//$tienda->consoleLog("Solicitando ".$_POST["number"]." tienda/s ...");
+	$tienda->consoleLog("Solicitando ".$_POST["number"]." tienda/s ...");
 	$tienda->solicitarTiendas($_POST["number"]);
 
 	

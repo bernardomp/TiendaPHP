@@ -7,6 +7,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <style>
+            .tableCustom td {
+                vertical-align: middle !important;
+            }
+
             .flex {
                 display:flex;
                 flex-direction:row;
@@ -23,6 +27,7 @@
                 background-clip: padding-box;
                 border: 1px solid #ced4da;
                 border-radius: .25rem;
+                width: 5em;
                 transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
             }
 
@@ -35,17 +40,16 @@
 
             #log {
                 overflow:auto;
+                margin:5px;
             }
 
             #menu {
                 margin:2%;
             }
 
-
-
             .gridcontainer {
                 display: grid;
-                grid-template-columns: 66% 34%;
+                grid-template-columns: 65% 35%;
                 justify-items:center;
             }
     </style>
@@ -54,6 +58,8 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
     <script>
+
+        var logIndex = 0;
 
         setInterval(function(){
             updateTiendas();
@@ -88,11 +94,35 @@
             $.ajax({
                 method: "POST",
                 url: "funciones.php",
-                data:{method:"updateLog"}
+                data:{method:"updateLog",index:logIndex}
             })
             .done(function(data) {
-                $('#log').html(data);
+                
+                var tabledata = JSON.parse(data);
+
+                if(tabledata.length > 0) {
+                
+                    createTable(tabledata);
+                    logIndex = tabledata[tabledata.length-1][0];
+                }
             });
+        }
+
+        function createTable(data) {
+            var table = document.getElementById("logtable");
+
+            for(var i = 0; i< data.length;i++) {
+
+                
+                var row = table.insertRow(1);
+                var cell1 = row.insertCell(0);
+                var cell2 = row.insertCell(1)
+
+                cell1.innerHTML = data[i][1];
+                cell2.innerHTML = data[i][2];
+                
+                //cell2.setAttribute("nowrap","nowrap");
+            }
         }
 
         function borrarBBDD() {
@@ -127,7 +157,17 @@
 
             </div>
 
-            <div id="log"></div>
+            <div id="log">
+
+                <table id="logtable" class="table tableCustom text-center">
+                    <tr>
+                        <th>Mensaje</th>
+                        <th>Hora</th>
+                    </tr>
+
+                </table>
+
+            </div>
 
     </div>
 

@@ -143,7 +143,7 @@
                 $response = $this->sendData($this->ip_monitor,$this->puerto_monitor,$xml);
 
                 if($response === FALSE) {
-                    $this->consoleLog("Solicitud "$i+1."/".$ntiendas.": Conexion con el monitor erronea");
+                    $this->consoleLog("Solicitud ". ($i+1) . "/".$ntiendas.": Conexion con el monitor erronea");
                 }
                 else {
                     //Obtenemos y guardamos la respuesta obtenida del monitor

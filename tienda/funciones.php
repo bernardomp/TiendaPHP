@@ -61,26 +61,29 @@
 
     }
     
-    function updateLog($con) {     
+    function updateLog($con) {    
 
-        $msgs = "SELECT * FROM `errores` ORDER BY time DESC";
-        $error = $con->query($msgs);
-
-        echo "<table>";
-
-        echo "<tr>";
-        echo "<th>Mensaje</th>";
-        echo "<th>Hora</th>"; 
-        echo "</tr>";
-
-        while($row = mysqli_fetch_array($error)) {
-            echo "<tr>";
-            echo "<td>".$row["msg"]."</td>";
-            echo "<td>".$row["time"]."</td>";
-            echo "</tr>";
+        if(!isset($_POST["index"])) {
+            die();
         }
 
-        echo "</table>";
+        $index = $_POST["index"];
+
+        $msgs = "SELECT * FROM `errores` WHERE id > '$index' ORDER BY time ASC";
+        $error = $con->query($msgs);
+
+        $brr = array();
+
+        while($row = mysqli_fetch_array($error)) {
+            $arr = array();
+            array_push($arr,$row["id"]);
+            array_push($arr,$row["msg"]);
+            array_push($arr,$row["time"]);
+
+            array_push($brr,$arr);            
+        }
+
+        echo json_encode($brr);
 
     }
 
