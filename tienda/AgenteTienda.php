@@ -122,23 +122,9 @@
             
             //Enviamos el xml por cada tienda que solicitamos
             for ($i = 0; $i<$ntiendas; $i++){
-               
-                
+            
                 $xml =  $doc->saveXML();
-                    
-                /*
-                if (!$doc->schemaValidate('schema/peticionconexion.xsd')) {
-                    echo 'DOMDocument::schemaValidate() Generated Errors!';
-                    libxml_display_errors();
-                }
-                    
-                else {
-                    //Enviamos fichero
-                    $res = new DOMDocument();
-                    sendData($ip_dst,$port_dst,$xml); 
-                }	
-                */
-                
+
                 //Enviamos el xml generado a la ip y puerto del monitor
                 $response = $this->sendData($this->ip_monitor,$this->puerto_monitor,$xml);
 
@@ -301,11 +287,7 @@
             if (!$doc->schemaValidate('schema/ackagenteiniciado.xsd')) {
                 echo 'DOMDocument::schemaValidate() Generated Errors!';
                 libxml_display_errors();
-            }
-            */
-
-            //$this->sendData($this->ip_monitor,$this->puerto_monitor,$xml);
-            //echo $xml; //Con echo debe ser suficiente
+            }*/
 
             //Devolvemos el fichero generado
             return $xml;
@@ -362,11 +344,6 @@
 
         //====================================================================================  
         public function entrarTienda(){
-            /*
-            if (!$datos->schemaValidate('schema/go.xsd')) { //Necesitamos schema
-                echo 'DOMDocument::schemaValidate() Generated Errors!';
-                libxml_display_errors();
-            }*/
             
             //Extraemos del fichero xml el identificador, ip y puerto del cliente
             $idCliente = $this->xml->getElementsByTagName('id')->item(0)->nodeValue;
@@ -452,6 +429,8 @@
             //Preparamos el fichero de respuesta para el cliente
             $doc = new DOMDocument();
             $doc->load('../SistemasMultiagentes2018/Grupos/G2/salirtiendarespuesta.xml');
+
+            echo "Pruebas";
         }
 
 
@@ -537,16 +516,20 @@
         //====================================================================================     
         public function comprarProducto(){
         
+            //Leemos identificadores de tienda y cliente
             $idcliente = $this->xml->getElementsByTagName('id')->item(0)->nodeValue;
             $idtienda = $this->xml->getElementsByTagName('id')->item(1)->nodeValue;
 
+            //Obtenemos ip y puerto del cliente
             $ipCliente = $this->xml->getElementsByTagName('ip')->item(0)->nodeValue;
             $puertoCliente = $this->xml->getElementsByTagName('puerto')->item(0)->nodeValue;
 
+            //Obtenemos las propiedades del producto
             $producto = $this->xml->getElementsByTagName('nombre')->item(0)->nodeValue;
-
             $cant = $this->xml->getElementsByTagName('cantidad')->item(0)->nodeValue;
             $cant = intval($cant);
+
+            $idtienda = intval($idtienda);
 
             $doc = new DOMDocument();
             $doc->load('../SistemasMultiagentes2018/Grupos/G5/respuesta.xml');
@@ -563,12 +546,22 @@
             $doc->getElementsByTagName('puerto')->item(0)->nodeValue = $this->puerto_tienda;
             $doc->getElementsByTagName('puerto')->item(1)->nodeValue = $puertoCliente;
 
+            $check_stock = "SELECT cantidad FROM Stock WHERE idproducto='$producto' AND idtienda='$idtienda'";
+
+            if (!$result = $this->con->query($check_stock)) {
+                printf("Error: %s\n", $this->con->error);
+                $venta = 0;
+            }
+            else{
+                $venta = $result->fetch_array(MYSQLI_NUM)[0]["cantidad"] - $cant;
+            }
+
             //Verificamos que la cantidad  que quieren comprar en mayor que cero
-            if($cant>0) {
+            if($cant>0 and $venta>0) {
                 
                 $producto= trim($producto);
                 
-                $actualizar_stock="UPDATE Stock SET cantidad = cantidad-'$cant' WHERE idproducto='$producto'";
+                $actualizar_stock="UPDATE Stock SET cantidad = cantidad-'$venta' WHERE idproducto='$producto' AND idtienda='$idtienda'";
 
                 //actualizamos el stock de ese producto en la tienda 
                 if (!$this->con->query($actualizar_stock)) {
@@ -576,7 +569,7 @@
                 }
 
                 //Insertamos mensaje
-                $doc->getElementsByTagName('contenido')->item(0)->nodeValue = "OK";
+                $doc->getElementsByTagName('cantidad')->item(0)->nodeValue = $venta;
             }
 
             else {
@@ -644,6 +637,7 @@
             return $data;
         }
 
+        //Elimina todas los registros de la base de datos
         function resetAgente() {
             $query1 = "DELETE FROM cliente";
             $query2 = "DELETE FROM clientetienda";

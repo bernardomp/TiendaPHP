@@ -43,9 +43,7 @@
 
 		//Iniciamos el stock de las tiendas recibidas del monitor
 		case "inicializacion":
-			$dat = $tienda->iniciarTiendaStock();
-			$tienda->consoleLog("Enviado ACK inicializacion".$dat);
-			echo $dat;
+			echo $tienda->iniciarTiendaStock();
 			break;
 
 		//El monitor indica el inicio de la simulacion
@@ -70,7 +68,7 @@
 			break;
 		
 		default:
-			$tienda->consoleLog("Opcion:".$tipo_req. " no disponible.");
+			$tienda->consoleLog("Opcion: ".$tipo_req. " no disponible.");
 
 	}
 	
