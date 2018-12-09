@@ -119,6 +119,8 @@
             //Indicamos en el xml el puerto del monitor y de la tienda
             $doc->getElementsByTagName('puerto')->item(0)->nodeValue = $this->puerto_tienda;
             $doc->getElementsByTagName('puerto')->item(1)->nodeValue = $this->puerto_monitor;
+
+            $doc->getElementsByTagName('rol')->item(0)->nodeValue = "Tienda";
             
             //Enviamos el xml por cada tienda que solicitamos
             for ($i = 0; $i<$ntiendas; $i++){
