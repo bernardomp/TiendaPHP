@@ -361,20 +361,15 @@
             //Convertimos el puerto y el idCliente a valores numerico
             $puertoCliente = intval($puertoCliente);
             $idCliente = intval($idCliente);
-            
-            //Insertamos en la base de datos el nuevo cliente
-            $entrar_tienda="INSERT INTO cliente (ip,puerto,idCliente,tiendaActual) VALUES ('$ipCliente','$puertoCliente','$idCliente','$idtienda')";
-            
-            if (!$this->con->query($entrar_tienda)) {
-                printf("Error: %s\n", $this->con->error);
-            }
+            $idTienda = intval($idTienda);
 
-            $this->consoleLog("Cliente " . $idCliente . "ha entrado en tienda" . $idTienda);
+            //Insertamos en la base de datos el nuevo cliente
+            $entrar_tienda="INSERT INTO cliente (ip,puerto,idCliente,tiendaActual) VALUES ('$ipCliente','$puertoCliente','$idCliente','$idTienda')";
+            
 
             //Preparamos el fichero de respuesta para el cliente
             $doc = new DOMDocument();
             $doc->load('../SistemasMultiagentes2018/Grupos/G3/Inicialización_Tienda_Cliente.xml');
-
 
             //Insertamos los ids
             $doc->getElementsByTagName('id')->item(0)->nodeValue = $id_tienda;
@@ -388,9 +383,20 @@
             $doc->getElementsByTagName('puerto')->item(0)->nodeValue = $this->puerto_tienda;
             $doc->getElementsByTagName('puerto')->item(1)->nodeValue = $puertoCliente;
 
-            //Insertamos mensaje
-            $doc->getElementsByTagName('msg')->item(0)->nodeValue = "OK";
 
+            if (!$this->con->query($entrar_tienda)) {
+                //Insertamos mensaje
+                $doc->getElementsByTagName('msg')->item(0)->nodeValue = "Error";
+                $this->consoleLog("Cliente " . $idCliente . " NO ha entrado en tienda " . $idTienda);
+            }
+
+            else {
+                //Insertamos mensaje
+                $doc->getElementsByTagName('msg')->item(0)->nodeValue = "OK";
+                $this->consoleLog("Cliente " . $idCliente . " SI ha entrado en tienda " . $idTienda);
+            }
+
+    
             //Guardamos los cambios realizados
             $xml =  $doc->saveXML();
         
@@ -429,11 +435,14 @@
             $salir_tienda="DELETE FROM cliente WHERE idcliente = '$id_cliente'";
             
             if (!$this->con->query($salir_tienda)) {
-                printf("Error: %s\n", $this->con->error);
+                $this->consoleLog("Cliente " . $idCliente . " NO ha salido de tienda");
             }
 
-            $this->consoleLog("Cliente " . $idCliente . "ha salido de tienda");
+            else {
+                $this->consoleLog("Cliente " . $idCliente . " SI ha salido de tienda");
+            }
 
+        
             //Preparamos el fichero de respuesta para el cliente
             $doc = new DOMDocument();
             $doc->load('../SistemasMultiagentes2018/Grupos/G2/salirtiendarespuesta.xml');
