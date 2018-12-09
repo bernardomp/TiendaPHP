@@ -323,6 +323,8 @@
         
             //Establecemos el estado de esta tienda como abierta
             $abrir_tienda="UPDATE tienda SET estado=1 WHERE id='$id_tienda'";
+
+            $this->consoleLog("Iniciada simulacion en tienda " . $id_tienda);
         
             //Comprobamos que la consulta se ejecuta correctamente
             if (!$this->con->query($abrir_tienda)) {
@@ -366,6 +368,8 @@
             if (!$this->con->query($entrar_tienda)) {
                 printf("Error: %s\n", $this->con->error);
             }
+
+            $this->consoleLog("Cliente " . $idCliente . "ha entrado en tienda" . $idTienda);
 
             //Preparamos el fichero de respuesta para el cliente
             $doc = new DOMDocument();
@@ -427,6 +431,8 @@
             if (!$this->con->query($salir_tienda)) {
                 printf("Error: %s\n", $this->con->error);
             }
+
+            $this->consoleLog("Cliente " . $idCliente . "ha salido de tienda");
 
             //Preparamos el fichero de respuesta para el cliente
             $doc = new DOMDocument();
@@ -572,11 +578,14 @@
 
                 //Insertamos mensaje
                 $doc->getElementsByTagName('cantidad')->item(0)->nodeValue = $venta;
+
+                $this->consoleLog("Cliente " . $idcliente . " SI compra en tienda" . $idienda);
             }
 
             else {
                 //Insertamos mensaje
                 $doc->getElementsByTagName('cantidad')->item(0)->nodeValue = 0;
+                $this->consoleLog("Cliente " . $idcliente . " NO compra en tienda" . $idienda);
             }
 
             $xml =  $doc->saveXML();

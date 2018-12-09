@@ -14,31 +14,41 @@
 </head>
 <body>
 
-        
-    <div id="info" class="gridcontainer">
+    <div>
+        <ul>
+            <li onclick=""><a href="#">Tiendas</a></li>
+            <li><a href="#">Clientes</a></li>
+            <li><a href="#">Log</a></li>
+        </ul>
+    </div>
+    
 
-            <div id="menu">
+        <div id="menu">
 
-                <div style="text-align:center">
-                    <input type="button" value="Request Tienda" onclick="requestTiendas()" class="btn btn-secondary">
-                    <input type="number" value=3 name="number" id="number" class="formElement">
-                    <input type="button" value="Borrar Tiendas" onclick="borrarBBDD()" class="btn btn-danger">
-                </div>
-        
-                <div class="flex" id="tiendas"></div>
-
+            <div style="text-align:center">
+                <input type="button" value="Request Tienda" onclick="requestTiendas()" class="btn btn-secondary">
+                <input type="number" value=3 name="number" id="number" class="formElement">
+                <input type="button" value="Borrar Tiendas" onclick="borrarBBDD()" class="btn btn-danger">
             </div>
+        
+            <div class="flex" id="tiendas"></div>
 
-            <div id="log">
+        </div>
 
-                <table id="logtable" class="table tableCustom text-center">
-                    <tr>
-                        <th>Mensaje</th>
-                        <th>Hora</th>
-                    </tr>
-                </table>
+        <div id="log">
 
-            </div>
+            <table id="logtable" class="table tableCustom text-center">
+                <tr>
+                    <th>Mensaje</th>
+                    <th>Hora</th>
+                </tr>
+            </table>
+
+        </div>
+
+        <div id="clientes">
+
+        </div>
 
     </div>
 
