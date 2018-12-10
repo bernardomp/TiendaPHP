@@ -563,14 +563,18 @@
             $doc->getElementsByTagName('puerto')->item(0)->nodeValue = $this->puerto_tienda;
             $doc->getElementsByTagName('puerto')->item(1)->nodeValue = $puertoCliente;
 
+            //Insertamos producto
+            $doc->getElementsByTagName('nombre')->item(0)->nodeValue = $producto;
+
             $check_stock = "SELECT cantidad FROM Stock WHERE idproducto='$producto' AND idtienda='$idtienda'";
 
             if (!$result = $this->con->query($check_stock)) {
                 printf("Error: %s\n", $this->con->error);
                 $venta = 0;
             }
-            else{
-                $venta = $result->fetch_array(MYSQLI_NUM)[0]["cantidad"] - $cant;
+            
+            else if ($result->fetch_array(MYSQLI_NUM)[0]["cantidad"] - $cant >= 0){
+                $venta = $cant;
             }
 
             //Verificamos que la cantidad  que quieren comprar en mayor que cero
@@ -578,7 +582,7 @@
                 
                 $producto= trim($producto);
                 
-                $actualizar_stock="UPDATE Stock SET cantidad = cantidad-'$venta' WHERE idproducto='$producto' AND idtienda='$idtienda'";
+                $actualizar_stock="UPDATE Stock SET cantidad = cantidad - '$venta' WHERE idproducto='$producto' AND idtienda='$idtienda'";
 
                 //actualizamos el stock de ese producto en la tienda 
                 if (!$this->con->query($actualizar_stock)) {
@@ -586,7 +590,7 @@
                 }
 
                 //Insertamos mensaje
-                $doc->getElementsByTagName('cantidad')->item(0)->nodeValue = $venta;
+                $doc->getElementsByTagName('cantidad')->item(0)->nodeValue = $cant;
 
                 $this->consoleLog("Cliente " . $idcliente . " SI compra en tienda" . $idienda);
             }
