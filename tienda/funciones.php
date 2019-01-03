@@ -27,6 +27,14 @@
             break;
     }
 
+    //=====================================================================================
+	    // AUTOR:
+        // NOMBRE: borrarBBDD
+	    // DESCRIPCIÓN: Elimina todas los registros de la base de datos
+	    // ARGUMENTOS: --
+	    // FUENTE: --
+        // SALIDA: --
+    //====================================================================================
     function borrarBBDD($con) {
         $query1 = "DELETE FROM cliente";
         $query2 = "DELETE FROM clientetienda";
@@ -34,6 +42,9 @@
         $query4 = "DELETE FROM producto";
         $query5 = "DELETE  FROM stock";
         $query6 = "DELETE  FROM tienda";
+
+
+        # Si alguna de las operaciones de borrado falla imprime el error correspondiente
 
         if (!$con->query($query3)) {
             printf("Error: %s\n", $this->con->error);
@@ -61,6 +72,15 @@
 
     }
     
+
+    //=====================================================================================
+	    // AUTOR:
+        // NOMBRE: updateLog
+	    // DESCRIPCIÓN: Muestra los errores encontrados que hay guardados en la tabla
+	    // ARGUMENTOS: --
+	    // FUENTE: --
+        // SALIDA: --
+    //====================================================================================
     function updateLog($con) {    
 
         if(!isset($_POST["index"])) {
@@ -69,6 +89,7 @@
 
         $index = $_POST["index"];
 
+        # Se seleccionan todos los errores de la tabla según el id y por tiempo ascendente
         $msgs = "SELECT * FROM `errores` WHERE id > '$index' ORDER BY time ASC";
         $error = $con->query($msgs);
 
@@ -87,6 +108,15 @@
 
     }
 
+
+    //=====================================================================================
+	    // AUTOR:
+        // NOMBRE: updateTiendas
+	    // DESCRIPCIÓN: Actualiza el estado de las tiendas
+	    // ARGUMENTOS: --
+	    // FUENTE: --
+        // SALIDA: --
+    //====================================================================================
     function updateTiendas($con) {
 
         $query = "SELECT * FROM `tienda`";
