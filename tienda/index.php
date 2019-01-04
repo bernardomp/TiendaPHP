@@ -38,6 +38,8 @@
 		$tipo_req = $tienda->getXML()->getElementsByTagName('contenido')->item(0)->nodeValue;
 	}
 
+	$tipo_req = trim($tipo_req);
+	
 	//Ejecutamos una accion de la tienda
 	switch($tipo_req) {
 

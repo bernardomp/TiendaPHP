@@ -366,23 +366,9 @@
             //Insertamos en la base de datos el nuevo cliente
             $entrar_tienda="INSERT INTO cliente (ip,puerto,idCliente,tiendaActual) VALUES ('$ipCliente','$puertoCliente','$idCliente','$idTienda')";
             
-
             //Preparamos el fichero de respuesta para el cliente
             $doc = new DOMDocument();
             $doc->load('../SistemasMultiagentes2018/Grupos/G3/Inicialización_Tienda_Cliente.xml');
-
-            //Insertamos los ids
-            $doc->getElementsByTagName('id')->item(0)->nodeValue = $id_tienda;
-            $doc->getElementsByTagName('id')->item(1)->nodeValue = $idCliente;
-
-            //Insertamos ip
-            $doc->getElementsByTagName('ip')->item(0)->nodeValue = $this->ip_tienda;
-            $doc->getElementsByTagName('ip')->item(1)->nodeValue = $ipCliente;
-
-            //Insertamos puerto
-            $doc->getElementsByTagName('puerto')->item(0)->nodeValue = $this->puerto_tienda;
-            $doc->getElementsByTagName('puerto')->item(1)->nodeValue = $puertoCliente;
-
 
             if (!$this->con->query($entrar_tienda)) {
                 //Insertamos mensaje
@@ -395,6 +381,37 @@
                 $doc->getElementsByTagName('msg')->item(0)->nodeValue = "OK";
                 $this->consoleLog("Cliente " . $idCliente . " SI ha entrado en tienda " . $idTienda);
             }
+
+            $this->consoleLog("Insertando lista tiendas");
+            $listatiendas = $this->xml->getElementsByTagName('tienda');      
+    
+            foreach($listatiendas as $node) {
+            
+                $idlistaTienda = $node->getElementsByTagName('id')->item(0)->nodeValue;
+
+                $idlistaTienda = intval($idlistaTienda);
+
+                $insertar_listatienda = "INSERT INTO clientetienda  VALUES ('$idCliente','$idlistaTienda')";
+
+                if (!$this->con->query($insertar_listatienda)) {
+                    //Insertamos mensaje
+                    $this->consoleLog("Error insertar lista tiendas");
+                }
+               
+            }
+        
+            //Insertamos los ids
+            $doc->getElementsByTagName('id')->item(0)->nodeValue = $id_tienda;
+            $doc->getElementsByTagName('id')->item(1)->nodeValue = $idCliente;
+
+            //Insertamos ip
+            $doc->getElementsByTagName('ip')->item(0)->nodeValue = $this->ip_tienda;
+            $doc->getElementsByTagName('ip')->item(1)->nodeValue = $ipCliente;
+
+            //Insertamos puerto
+            $doc->getElementsByTagName('puerto')->item(0)->nodeValue = $this->puerto_tienda;
+            $doc->getElementsByTagName('puerto')->item(1)->nodeValue = $puertoCliente;
+
 
     
             //Guardamos los cambios realizados
@@ -607,7 +624,17 @@
       
         }
 
-        
+        function enviarTiendasCliente() {
+
+            $idtienda = $this->xml->getElementsByTagName('id')->item(1)->nodeValue;;
+
+            $idtienda = intval($idtienda);
+
+            $lista_tiendas = "";
+        }        
+
+
+
         function consoleLog($msg) {
 
             $error="INSERT INTO Errores (msg) VALUES ('$msg')";
