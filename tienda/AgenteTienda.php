@@ -241,7 +241,8 @@
                 }
 
             }
-      
+            
+            //Ejecutamos enviamos al monitor un mensaje notificando la recepción de su informacion
             return $this->agenteIniciado($tienda);
         }
 
@@ -358,7 +359,7 @@
             $idTienda = $this->xml->getElementsByTagName('id')->item(1)->nodeValue;
 
     
-            //Convertimos el puerto y el idCliente a valores numerico
+            //Convertimos el puerto y el idCliente a valores numericos
             $puertoCliente = intval($puertoCliente);
             $idCliente = intval($idCliente);
             $idTienda = intval($idTienda);
@@ -385,12 +386,15 @@
             $this->consoleLog("Insertando lista tiendas");
             $listatiendas = $this->xml->getElementsByTagName('tienda');      
     
+            //Iteramos sobre la lista de tiendas que conoce el cliente
             foreach($listatiendas as $node) {
             
+                //Obtenemos el id
                 $idlistaTienda = $node->getElementsByTagName('id')->item(0)->nodeValue;
 
                 $idlistaTienda = intval($idlistaTienda);
 
+                //Insertamos en la bbdd una fila relacionando el cliente y sus tiendas conocidas
                 $insertar_listatienda = "INSERT INTO clientetienda  VALUES ('$idCliente','$idlistaTienda')";
 
                 if (!$this->con->query($insertar_listatienda)) {
@@ -417,7 +421,7 @@
             //Guardamos los cambios realizados
             $xml =  $doc->saveXML();
         
-            //Con echo debe ser suficiente
+            //Con echo debe ser suficiente para enviar el mensaje de respuesta a nuestro cliente
             echo $xml;
         }
 
@@ -451,6 +455,7 @@
             //Eliminamos al cliente de la BBDD
             $salir_tienda="DELETE FROM cliente WHERE idcliente = '$id_cliente'";
             
+            //Comprobamos si la consulta se ha ejecutado correctamente
             if (!$this->con->query($salir_tienda)) {
                 $this->consoleLog("Cliente " . $idCliente . " NO ha salido de tienda");
             }
@@ -511,28 +516,7 @@
             }*/
 
             $this->resetAgente();
-        }
-        
-
-
-        //=====================================================================================
-
-            // AUTOR: 
-            // NOMBRE: extraerProductos
-            // DESCRIPCIÓN: devuelve el listado de productos de una tienda cuando el cliente
-            //              ha solicitado una peticion para conocer los productos
-            // ARGUMENTOS: ($tienda)
-            // FUENTE: --
-            // SALIDA: lista de productos de una tienda
-
-        //====================================================================================  
-        public function extraerProductos(){
-           
-            $productos='select nombre from producto';
-            mysql_query($productos,$conexion);
-        }
-        //***FALTA PASAR LA TIENDA POR PARAMETRO Y CAMBIAR LA CONSULTA***
-        
+        }    
 
 
         //=====================================================================================
@@ -572,11 +556,11 @@
             $doc->getElementsByTagName('id')->item(0)->nodeValue = $idtienda;
             $doc->getElementsByTagName('id')->item(1)->nodeValue = $idcliente;
 
-            //Insertamos ip
+            //Insertamos ip destino y origen
             $doc->getElementsByTagName('ip')->item(0)->nodeValue = $this->ip_tienda;
             $doc->getElementsByTagName('ip')->item(1)->nodeValue = $ipCliente;
 
-            //Insertamos puerto
+            //Insertamos puerto destino y origen
             $doc->getElementsByTagName('puerto')->item(0)->nodeValue = $this->puerto_tienda;
             $doc->getElementsByTagName('puerto')->item(1)->nodeValue = $puertoCliente;
 
@@ -613,11 +597,12 @@
             }
 
             else {
-                //Insertamos mensaje
+                //Insertamos mensaje, indicando la cantidad que podemos vender
                 $doc->getElementsByTagName('cantidad')->item(0)->nodeValue = 0;
                 $this->consoleLog("Cliente " . $idcliente . " NO compra en tienda" . $idienda);
             }
 
+            //Guardamos los cambios efectuados en el fichero xml
             $xml =  $doc->saveXML();
          
             return $xml;
@@ -627,7 +612,7 @@
         //=====================================================================================
 	    // AUTOR: BERNARDO MARTINEZ PARRAS
         // NOMBRE: consoleLog
-	    // DESCRIPCIÓN: Inserta los errores en una tabla para tener un registro
+	    // DESCRIPCIÓN: Inserta los errores en una tabla para tener un registro de los cambios en el sistema
 	    // ARGUMENTOS: --
 	    // FUENTE: --
         // SALIDA: --

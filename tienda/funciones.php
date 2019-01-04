@@ -3,13 +3,20 @@
     if(!isset($_POST["method"])) {
         die();
     }
+    
+    /*
+        Este fichero nos permite actualizar nuestra interfaz grafica con la información de
+        la base de datos
+    */
 
+    //Establecemos ka conexion con la bbdd
     $con = new mysqli("localhost", "root", "toor", "multiagentes");
 
     if ($con->connect_errno) {
         die("Fallo al conectar a MySQL: " . $con->connect_error);
     }
 
+    //Verificamos que funcion hemos recibido desde nuestra interfaz
     switch ($_POST["method"]) {
         case 'updateTiendas':
             updateTiendas($con);
@@ -76,7 +83,7 @@
     //=====================================================================================
 	    // AUTOR:
         // NOMBRE: updateLog
-	    // DESCRIPCIÓN: Muestra los errores encontrados que hay guardados en la tabla
+	    // DESCRIPCIÓN: Muestra los errores encontrados que hay guardados en la tabla de la base de datos
 	    // ARGUMENTOS: --
 	    // FUENTE: --
         // SALIDA: --
@@ -95,15 +102,17 @@
 
         $brr = array();
 
+        //Recorremos la bbdd y extraemos los campos seleccionados
         while($row = mysqli_fetch_array($error)) {
             $arr = array();
             array_push($arr,$row["id"]);
             array_push($arr,$row["msg"]);
             array_push($arr,$row["time"]);
 
-            array_push($brr,$arr);            
+            array_push($brr,$arr); //Almcenamos los campos en un array           
         }
 
+        //Devolvemos el array a nuestra interfaz en formato json
         echo json_encode($brr);
 
     }
@@ -125,8 +134,10 @@
             printf("Error: %s\n", $con->error);
         }
 
+        //Recorremos la bbdd
         while($row = mysqli_fetch_array($tiendas)) {
         
+            //Generamos el codigo html
             echo "<div class='flexitem'>";
 
                 echo "<div>Tienda: " .$row["id"] . "</div>";
@@ -149,7 +160,7 @@
                         $stocks = "SELECT * FROM `stock` WHERE idtienda='$idtienda'";
                         $stock = $con->query($stocks);
 
-
+                        //Devolvemos la productos de cada tienda
                         while($row = mysqli_fetch_array($stock)) {
                 
                             echo "<div>" . $row["idproducto"].": ".$row["cantidad"]. "</div>";
