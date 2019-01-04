@@ -531,7 +531,7 @@
             $productos='select nombre from producto';
             mysql_query($productos,$conexion);
         }
-        //***FALTA PASAR LA TIENDA POR PARAMETRO Y CAMBMIAR LA CONSULTA***
+        //***FALTA PASAR LA TIENDA POR PARAMETRO Y CAMBIAR LA CONSULTA***
         
 
 
@@ -624,17 +624,14 @@
       
         }
 
-        function enviarTiendasCliente() {
-
-            $idtienda = $this->xml->getElementsByTagName('id')->item(1)->nodeValue;;
-
-            $idtienda = intval($idtienda);
-
-            $lista_tiendas = "";
-        }        
-
-
-
+        //=====================================================================================
+	    // AUTOR: BERNARDO MARTINEZ PARRAS
+        // NOMBRE: consoleLog
+	    // DESCRIPCIÓN: Inserta los errores en una tabla para tener un registro
+	    // ARGUMENTOS: --
+	    // FUENTE: --
+        // SALIDA: --
+        //====================================================================================
         function consoleLog($msg) {
 
             $error="INSERT INTO Errores (msg) VALUES ('$msg')";
@@ -688,7 +685,14 @@
             return $data;
         }
 
-        //Elimina todas los registros de la base de datos
+        //=====================================================================================
+	    // AUTOR: BERNARDO MARTINEZ PARRAS
+        // NOMBRE: resetAgente
+	    // DESCRIPCIÓN: Elimina todas los registros de la base de datos
+	    // ARGUMENTOS: --
+	    // FUENTE: --
+        // SALIDA: --
+        //====================================================================================
         function resetAgente() {
             $query1 = "DELETE FROM cliente";
             $query2 = "DELETE FROM clientetienda";
@@ -696,6 +700,8 @@
             $query4 = "DELETE FROM producto";
             $query5 = "DELETE  FROM stock";
             $query6 = "DELETE  FROM tienda";
+
+            # Si alguna de las operaciones de borrado falla imprime el error correspondiente
     
             if (!$this->con->query($query3)) {
                 printf("Error: %s\n", $this->con->error);
