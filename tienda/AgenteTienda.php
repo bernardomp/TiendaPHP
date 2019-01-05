@@ -345,7 +345,7 @@
             //              confirmacion
             // ARGUMENTOS: --
             // FUENTE: --
-            // SALIDA: --
+            // SALIDA: D
 
         //====================================================================================  
         public function entrarTienda(){
