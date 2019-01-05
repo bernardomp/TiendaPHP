@@ -345,7 +345,7 @@
             //              confirmacion
             // ARGUMENTOS: --
             // FUENTE: --
-            // SALIDA: D
+            // SALIDA: Mensaje de confirmación al cliente
 
         //====================================================================================  
         public function entrarTienda(){
